@@ -54,7 +54,7 @@
     "autoprefixer": "^10.4.20",
     "cookie": "^1.0.2",
     "cross-env": "^7.0.3",
-    "cypress": "^13.16.0",
+    "cypress": "^14.1.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
