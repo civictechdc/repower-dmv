@@ -20,11 +20,13 @@ This is the Civic Tech DC repo for the Electrify DC website project.
 
 ## Development
 
-- Create your own untracked .env file
+### Create your own untracked .env file
 
-  ```sh
-  cp .env.example .env
-  ```
+This sets some necessary environment variables and allows you to add your own environment variables in a file that is ignored by git.
+
+```sh
+cp .env.example .env
+```
 
 <details>
 <summary><strong>Developing locally on MacOS</strong></summary>
