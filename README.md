@@ -49,7 +49,7 @@ The setup script sets up the database, runs any pending migrations, and seeds th
 npm run setup
 ```
 
-#### Start dev server
+#### Start the dev server
 
 This starts your app in development mode, rebuilding assets on file changes.
 
