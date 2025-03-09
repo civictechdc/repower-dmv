@@ -27,7 +27,7 @@ This is the Civic Tech DC repo for the Electrify DC website project.
   ```
 
 <details>
-<summary>> **Developing locally on MacOS**</summary>
+<summary>**Developing locally on MacOS**</summary>
 
 - Nodejs
 
@@ -41,7 +41,7 @@ I use [asdf](https://asdf-vm.com/) to manage my tool versions but you could also
 npm install
 ```
 
-- Run the setup script once
+- Run the setup script
 
 The setup script sets up the database, runs any pending migrations, and seeds the database with some starter data.
 
