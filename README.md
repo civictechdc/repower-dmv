@@ -29,19 +29,19 @@ This is the Civic Tech DC repo for the Electrify DC website project.
 <details>
 <summary><strong>Developing locally on MacOS</strong></summary>
 
-- Nodejs
+#### Install Nodejs
 
 You'll need to have Nodejs installed locally. See [.tool-versions](./.tool-versions) for the version.
 
 I use [asdf](https://asdf-vm.com/) to manage my tool versions but you could also use `n`, `nvm`, or specific versions of `Nodejs`.
 
-- Install dependencies
+#### Install dependencies
 
 ```
 npm install
 ```
 
-- Run the setup script
+#### Run the setup script
 
 The setup script sets up the database, runs any pending migrations, and seeds the database with some starter data.
 
@@ -49,7 +49,7 @@ The setup script sets up the database, runs any pending migrations, and seeds th
 npm run setup
 ```
 
-- Start dev server:
+#### Start dev server
 
 This starts your app in development mode, rebuilding assets on file changes.
 
