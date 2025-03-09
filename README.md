@@ -27,7 +27,7 @@ This is the Civic Tech DC repo for the Electrify DC website project.
   ```
 
     <details>
-    <summary><h3>Developing locally on MacOS</h3></summary>
+    <summary>Developing locally on MacOS</summary>
 
   - Nodejs
 
