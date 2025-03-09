@@ -26,38 +26,38 @@ This is the Civic Tech DC repo for the Electrify DC website project.
   cp .env.example .env
   ```
 
-    <details>
-    <summary>Developing locally on MacOS</summary>
+<details>
+<summary>> **Developing locally on MacOS**</summary>
 
-  - Nodejs
+- Nodejs
 
-  You'll need to have Nodejs installed locally. See [.tool-versions](./.tool-versions) for the version.
+You'll need to have Nodejs installed locally. See [.tool-versions](./.tool-versions) for the version.
 
-  I use [asdf](https://asdf-vm.com/) to manage my tool versions but you could also use `n`, `nvm`, or specific versions of `Nodejs`.
+I use [asdf](https://asdf-vm.com/) to manage my tool versions but you could also use `n`, `nvm`, or specific versions of `Nodejs`.
 
-  - Install dependencies
+- Install dependencies
 
-  ```
-  npm install
-  ```
+```
+npm install
+```
 
-  - Run the setup script once
+- Run the setup script once
 
-    The database seed script creates a new user with some data you can use to get started:
+The setup script sets up the database, runs any pending migrations, and seeds the database with some starter data.
 
-  ```sh
-  npm run setup
-  ```
+```sh
+npm run setup
+```
 
-  - Start dev server:
+- Start dev server:
 
-  This starts your app in development mode, rebuilding assets on file changes.
+This starts your app in development mode, rebuilding assets on file changes.
 
-  ```sh
-  npm run dev
-  ```
+```sh
+npm run dev
+```
 
-    </details>
+</details>
 
 ### The app comes with a test-user pre-configured
 
