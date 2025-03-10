@@ -53,11 +53,36 @@ npm run setup
 
 #### Start the dev server
 
-This starts your app in development mode, rebuilding assets on file changes.
+This starts your app in development mode, rebuilding assets on file changes. It will run at [localhost:3000](localhost:3000).
 
 ```sh
 npm run dev
 ```
+
+</details>
+
+<details>
+<summary><strong>Developing locally with Docker</strong></summary>
+
+#### Install Docker
+
+You'll need to have Docker Desktop installed and running.
+
+#### Build the Docker image
+
+```
+docker-compile build
+```
+
+#### Run the Docker image
+
+Now you can run the Docker image with Docker Compose. It will run at [localhost:3000](localhost:3000). Docker Compose will share your local application files with the Docker container using a volume so that as you change application files they should also automatically update inside the Docker container and be reloaded by the web server.
+
+```sh
+docker-compose up
+```
+
+If you want it to run in the background you can add the `-d` flag. If you do you can view logs with `docker-compose logs app`.
 
 </details>
 
