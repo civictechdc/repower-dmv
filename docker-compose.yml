@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: dev.Dockerfile
+    build: .
     environment:
       - SESSION_SECRET
       - DATABASE_URL

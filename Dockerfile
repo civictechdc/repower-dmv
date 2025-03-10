@@ -1,61 +1,40 @@
 # base node image
 FROM node:23-bullseye-slim as base
 
-# set for base and all layer that inherit from it
-ENV NODE_ENV production
+ARG SESSION_SECRET
+ARG DATABASE_URL
 
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl sqlite3
 
-# Install all node_modules, including dev dependencies
-FROM base as deps
-
 WORKDIR /myapp
 
+# Install Nodejs packages
 ADD package.json package-lock.json .npmrc ./
 RUN npm install --include=dev
+RUN npm prune
 
-# Setup production node_modules
-FROM base as production-deps
-
-WORKDIR /myapp
-
-COPY --from=deps /myapp/node_modules /myapp/node_modules
-ADD package.json package-lock.json .npmrc ./
-RUN npm prune --omit=dev
-
-# Build the app
-FROM base as build
-
-WORKDIR /myapp
-
-COPY --from=deps /myapp/node_modules /myapp/node_modules
-
+# Setup the database
 ADD prisma .
 RUN npx prisma generate
 
+# Copy over the rest of the files and build
+ENV NODE_ENV="development"
 ADD . .
 RUN npm run build
 
-# Finally, build the production image with minimal footprint
-FROM base
-
-ENV DATABASE_URL=file:/data/sqlite.db
-ENV PORT="8080"
-ENV NODE_ENV="production"
-
-# add shortcut for connecting to database CLI
+# Add shortcut for connecting to database CLI
 RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-cli && chmod +x /usr/local/bin/database-cli
 
-WORKDIR /myapp
+# Expose port 3000 to the host
+EXPOSE 3000
 
-COPY --from=production-deps /myapp/node_modules /myapp/node_modules
-COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
+# Set up a volume to sync code changes
+VOLUME [ "/myapp" ]
 
-COPY --from=build /myapp/build /myapp/build
-COPY --from=build /myapp/public /myapp/public
-COPY --from=build /myapp/package.json /myapp/package.json
-COPY --from=build /myapp/start.sh /myapp/start.sh
-COPY --from=build /myapp/prisma /myapp/prisma
-
-ENTRYPOINT [ "./start.sh" ]
+# Setup necessary env vars and run the web server in development mode!
+ENV HOST="0.0.0.0"
+ENV PORT="3000"
+ENV SESSION_SECRET=$SESSION_SECRET
+ENV DATABASE_URL=$DATABASE_URL
+CMD npm run dev
