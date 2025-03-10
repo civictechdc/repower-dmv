@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    environment:
+      - SESSION_SECRET
+      - DATABASE_URL
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/myapp/app
+      - ./assets:/myapp/assets
+      - ./cypress:/myapp/cypress
+      - ./mocks:/myapp/mocks
+      - ./prisma:/myapp/prisma
+      - ./public:/myapp/public
+      - ./test:/myapp/test
