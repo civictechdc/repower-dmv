@@ -71,7 +71,7 @@ You'll need to have Docker Desktop installed and running.
 #### Build the Docker image
 
 ```
-docker-compile build
+docker-compose build
 ```
 
 #### Run the Docker image
