@@ -1,6 +1,9 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        - DATABASE_URL
     environment:
       - SESSION_SECRET
       - DATABASE_URL

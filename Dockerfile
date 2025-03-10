@@ -15,8 +15,9 @@ RUN npm install --include=dev
 RUN npm prune
 
 # Setup the database
-ADD prisma .
-RUN npx prisma generate
+ENV DATABASE_URL=$DATABASE_URL
+ADD prisma ./prisma
+RUN npm run setup
 
 # Copy over the rest of the files and build
 ENV NODE_ENV="development"
@@ -36,5 +37,4 @@ VOLUME [ "/myapp" ]
 ENV HOST="0.0.0.0"
 ENV PORT="3000"
 ENV SESSION_SECRET=$SESSION_SECRET
-ENV DATABASE_URL=$DATABASE_URL
 CMD npm run dev
