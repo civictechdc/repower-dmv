@@ -1,12 +1,10 @@
 site_url: https://repower-dmv-content.fly.dev
-site_id: 11d3c7b6-70ab-4cc9-adb6-ffd63655d08d
 
 backend:
   name: github
   repo: civictechdc/repower-dmv
   branch: cms-content-updates
-  site_id: 11d3c7b6-70ab-4cc9-adb6-ffd63655d08d
-  site_domain: 11d3c7b6-70ab-4cc9-adb6-ffd63655d08d
+  base_url: https://decap.sheldonb.com
 
 media_folder: assets/cms-uploads
 public_folder: public/build
