@@ -2,6 +2,7 @@ import type { MetaFunction } from "@remix-run/node";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 
+import content from "../content/contractors.json";
 import { CONTRACTORS, STATES, SERVICES } from "../data";
 import { State, Service, Contractor, Address } from "../types";
 
@@ -109,7 +110,7 @@ export default function ContractorList() {
   return (
     <main className="relative min-h-screen bg-white p-8">
       <h1 className="text-center text-4xl font-extrabold tracking-tight text-gray-900">
-        Contractor List
+        {content.heading}
       </h1>
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>

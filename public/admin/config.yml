@@ -1,0 +1,20 @@
+site_url: localhost:3000
+
+backend:
+  name: github
+  repo: civictechdc/repower-dmv
+  branch: cms-content-updates
+
+media_folder: assets/cms-uploads
+public_folder: public/build
+
+collections:
+  - name: "page"
+    label: "Page"
+    files:
+      - label: "Contractor List"
+        name: "contractors"
+        preview_path: "contractors"
+        file: "app/content/contractors.json"
+        fields:
+          - { label: Heading, name: heading, widget: string }
