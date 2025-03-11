@@ -1,4 +1,4 @@
-site_url: localhost:3000
+site_url: https://repower-dmv-content.fly.dev
 
 backend:
   name: github
