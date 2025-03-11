@@ -36,3 +36,48 @@ model Note {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 }
+
+
+model Contractor {
+  id               String           @id @default(uuid())
+  name             String
+  email            String
+  phone            String
+  websiteURL       String?
+  address          String?
+  numberOfReviews  Int?
+  
+  certifications   Certification[]
+  services         Service[]
+  statesServed     StatesServed[]
+}
+
+model Certification {
+  id              Int        @id @default(autoincrement())
+  contractorId    String
+  certificationName String
+  
+  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  
+  @@unique([contractorId, certificationName])
+}
+
+model Service {
+  id              Int        @id @default(autoincrement())
+  contractorId    String
+  serviceName     String
+  
+  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  
+  @@unique([contractorId, serviceName])
+}
+
+model StatesServed {
+  id              Int        @id @default(autoincrement())
+  contractorId    String
+  state           String
+  
+  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  
+  @@unique([contractorId, state])
+}
