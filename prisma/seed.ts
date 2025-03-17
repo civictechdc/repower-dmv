@@ -40,6 +40,50 @@ async function seed() {
     },
   });
 
+  const contractors = [];
+
+  for (let i = 1; i <= 10; i++) {
+    const contractor = await prisma.contractor.create({
+      data: {
+        name: `Contractor ${i}`,
+        email: `contractor${i}@example.com`,
+        phone: `555-000${i}`,
+        website: `https://contractor${i}.com`,
+        addressLine1: `123${i} Main St`,
+        addressLine2: null,
+        city: `City ${i}`,
+        state: "MD",
+        zip: `1234${i}`,
+
+        certifications: {
+          create: [
+            { certificationName: "Cert A" },
+            { certificationName: "Cert B" },
+          ],
+        },
+
+        services: {
+          create: [
+            { serviceName: "Heat Pump" },
+            { serviceName: "HVAC" },
+            { serviceName: "Solar Panels" },
+          ],
+        },
+
+        statesServed: {
+          create: [
+            { state: "MD" },
+            { state: "VA" },
+            { state: "DC" },
+          ],
+        },
+      },
+    });
+
+    contractors.push(contractor);
+  }
+
+
   console.log(`Database has been seeded. 🌱`);
 }
 
