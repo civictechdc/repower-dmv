@@ -6,6 +6,13 @@ import content from "../content/contractors.json";
 import { CONTRACTORS, STATES, SERVICES } from "../data";
 import { State, Service, Contractor, Address } from "../types";
 
+import { useLoaderData } from "@remix-run/react";
+import { getContractors } from "~/models/contractor.server";
+
+export async function loader() {
+  const data = await getContractors()
+  return data;
+} 
 export const meta: MetaFunction = () => [
   { title: "Contractor List | re:Power DMV" },
 ];
@@ -82,6 +89,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
+  const dbContractors = useLoaderData<typeof loader>();
   const [selectedState, setSelectedState] = useState<State | undefined>();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(CONTRACTORS);
