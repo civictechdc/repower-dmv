@@ -47,7 +47,7 @@ async function seed() {
       data: {
         name: `Contractor ${i}`,
         email: `contractor${i}@example.com`,
-        phone: `555-000${i}`,
+        phone: `(202)555-000${i%10}`,
         website: `https://contractor${i}.com`,
         addressLine1: `123${i} Main St`,
         addressLine2: null,
