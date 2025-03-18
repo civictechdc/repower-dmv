@@ -53,7 +53,7 @@ async function seed() {
         addressLine2: null,
         city: `City ${i}`,
         state: "MD",
-        zip: `1234${i}`,
+        zip: `1234${i%10}`,
 
         certifications: {
           create: [
