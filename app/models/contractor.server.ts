@@ -1,4 +1,5 @@
 import { Contractor } from "@prisma/client";
+
 import { prisma } from "~/db.server";
 
 export const getContractorById = async (id: Contractor["id"]) => {
