@@ -11,18 +11,16 @@ export const SERVICES = [
 export type State = (typeof STATES)[number];
 export type Service = (typeof SERVICES)[number];
 
-export interface Address {
-  line1: string;
-  line2: string;
-  city: string;
-  state: State;
-  zipCode: string;
-}
-
 export interface Contractor {
   name: string;
-  address: Address;
-  phoneNumber: string;
+  email: string;
+  phone: string;
+  website: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
   statesServed: string[];
   services: Service[];
 }

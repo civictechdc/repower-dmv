@@ -1,16 +1,18 @@
 import type { MetaFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import { CONTRACTORS, STATES, SERVICES } from "../data";
-import { State, Service, Contractor, Address } from "../types";
+import { STATES, SERVICES, State, Service, Contractor } from "../types";
+
 
 export async function loader() {
   const data = await getContractors();
-  return data;
+  return json(data);
 }
 export const meta: MetaFunction = () => [
   { title: "Contractor List | re:Power DMV" },
@@ -26,20 +28,6 @@ const PhoneLink = (props: PhoneLinkProps) => {
   return <a href={`tel:+1${phoneNumber}`}>{formattedPhoneNumber}</a>;
 };
 
-interface AddressBlockProps {
-  address: Address;
-}
-
-const AddressBlock = ({ address }: AddressBlockProps) => {
-  return (
-    <>
-      <p>{address.line1}</p>
-      {address.line2 ? <p>{address.line2}</p> : null}
-      <p>{`${address.city}, ${address.state} ${address.zipCode}`}</p>
-    </>
-  );
-};
-
 const filterContractors = (
   contractors: Contractor[],
   selectedState: State | undefined,
@@ -48,11 +36,11 @@ const filterContractors = (
   const filtered = contractors.filter((contractor) => {
     const matchesSelectedState =
       selectedState === undefined ||
-      contractor.statesServed.includes(selectedState);
+      contractor.statesServed.some(s => s.state == selectedState);
 
     const matchesSelectedServices =
       selectedServices.length === 0 ||
-      contractor.services.some((service) => selectedServices.includes(service));
+      contractor.services.some((service) => selectedServices.includes(service.serviceName));
 
     return matchesSelectedState && matchesSelectedServices;
   });
@@ -67,20 +55,36 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   const { contractor } = props;
   return (
     <li key={contractor.name} className="flex justify-center">
-      <div className="flex w-full max-w-2xl items-center overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
-        <div className="flex-shrink-0">
-          <img
-            className="h-24 w-24 object-cover"
-            src="https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg"
-            alt="Placeholder"
-          />
-        </div>
-        <div className="p-4">
-          <h2 className="text-xl font-bold">{contractor.name}</h2>
-          <PhoneLink phoneNumber={contractor.phoneNumber} />
-          <AddressBlock address={contractor.address} />
-          <p>States Served: {contractor.statesServed.join(", ")}</p>
-          <p>Services Offered: {contractor.services.join(", ")}</p>
+      <div className="relative w-full max-w-2xl items-start overflow-hidden cursor-pointer rounded-lg border border-gray-200 bg-white shadow-md">
+        <h2 className="text-xl font-bold p-2">{contractor.name}</h2>
+        <div className="flex">
+          <div className="flex-shrink-0 pl-2 pb-2">
+            <img
+              className="h-24 w-24 object-cover"
+              src="https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg"
+              alt="Placeholder"
+            />
+          </div>
+          <div className="grow px-4 pb-4">
+            <ul>
+              {contractor.statesServed.map((item, index) => (
+                <li key={index} className="inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800 mr-1">{item.state}</li>
+              ))}
+            </ul>
+            <ul>
+              {contractor.services.map((item, index) => (
+                <li key={index} className="inline-block rounded-full bg-green-100 px-2 text-xs text-green-800 mr-1">{item.serviceName}</li>
+              ))}
+            </ul>
+            <a href={contractor.website} target="_blank" className="block underline hover:text-blue-500" onClick={ e => e.stopPropagation() }>{contractor.website}</a>
+          </div>
+          <div className="grow px-4 pb-4 text-sm">
+            <PhoneLink phoneNumber={contractor.phone} />
+            <p>{contractor.email}</p>
+            <p>{contractor.addressLine1}</p>
+            {contractor.addressLine2 ? <p>{contractor.addressLine2}</p> : null}
+            <p>{`${contractor.city}, ${contractor.state} ${contractor.zip}`}</p>
+          </div>
         </div>
       </div>
     </li>
@@ -88,6 +92,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
+  const CONTRACTORS = useLoaderData<typeof loader>().contractors;
   const [selectedState, setSelectedState] = useState<State | undefined>();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(CONTRACTORS);
