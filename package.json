@@ -6,6 +6,7 @@
   "scripts": {
     "build": "remix build",
     "db:create-migration": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
     "dev": "remix dev -c \"npm run dev:serve\"",
     "dev:serve": "cross-env NODE_OPTIONS=\"--import ./mocks/index.js\" remix-serve ./build/index.js",
     "format": "prettier --write .",
