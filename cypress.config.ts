@@ -6,8 +6,8 @@ export default defineConfig({
       const isDev = config.watchForFileChanges;
       const port = process.env.PORT ?? (isDev ? "3000" : "8811");
       const configOverrides = {
-        // baseUrl: `http://localhost:${port}`,
-        // screenshotOnRunFailure: !process.env.CI,
+        baseUrl: `http://localhost:${port}`,
+        screenshotOnRunFailure: !process.env.CI,
       };
 
       // To use this:
