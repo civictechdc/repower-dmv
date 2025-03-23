@@ -37,7 +37,6 @@ model Note {
   userId String
 }
 
-
 model Contractor {
   id               String           @id @default(uuid())
   name             String
@@ -55,44 +54,44 @@ model Contractor {
   
   certifications   Certification[]
   services         Service[]
-  statesServed     StatesServed[]
+  statesServed     States[]
 }
 
 model Certification {
   id              Int        @id @default(autoincrement())
-  contractorId    String
-  certificationName String
+  name String
+  shortName String
+  description String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  contractors      Contractor[]
   
-  @@unique([contractorId, certificationName])
+  @@unique(name)
 }
 
 model Service {
   id              Int        @id @default(autoincrement())
-  contractorId    String
-  serviceName     String
+  name     String
+  description String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  contractors      Contractor[]
   
-  @@unique([contractorId, serviceName])
+  @@unique(name)
 }
 
-model StatesServed {
+model States {
   id              Int        @id @default(autoincrement())
-  contractorId    String
-  state           String
+  name           String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  contractor      Contractor @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+  contractors      Contractor[]
   
-  @@unique([contractorId, state])
+  @@unique(name)
 }
