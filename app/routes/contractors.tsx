@@ -7,8 +7,14 @@ import Select from "react-select";
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import { STATES, SERVICES, State, Contractor } from "../types";
-
+import {
+  STATES,
+  SERVICES,
+  State,
+  Contractor,
+  SerializedContractor,
+  deserializeContractors,
+} from "../types";
 
 export async function loader() {
   const data = await getContractors();
@@ -40,7 +46,9 @@ const filterContractors = (
 
     const matchesSelectedServices =
       selectedServices.length === 0 ||
-      contractor.services.some((service) => selectedServices.includes(service.serviceName));
+      contractor.services.some((service) =>
+        selectedServices.includes(service.serviceName),
+      );
 
     return matchesSelectedState && matchesSelectedServices;
   });
@@ -55,10 +63,10 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   const { contractor } = props;
   return (
     <li key={contractor.name} className="flex justify-center">
-      <div className="relative w-full max-w-2xl items-start overflow-hidden cursor-pointer rounded-lg border border-gray-200 bg-white shadow-md">
-        <h2 className="text-xl font-bold p-2">{contractor.name}</h2>
+      <div className="relative w-full max-w-2xl cursor-pointer items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
+        <h2 className="p-2 text-xl font-bold">{contractor.name}</h2>
         <div className="flex">
-          <div className="flex-shrink-0 pl-2 pb-2">
+          <div className="flex-shrink-0 pb-2 pl-2">
             <img
               className="h-24 w-24 object-cover"
               src="https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg"
@@ -68,15 +76,33 @@ const ContractorBlock = (props: ContractorBlockProps) => {
           <div className="grow px-4 pb-4">
             <ul>
               {contractor.statesServed.map((item, index) => (
-                <li key={index} className="inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800 mr-1">{item.state}</li>
+                <li
+                  key={index}
+                  className="mr-1 inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800"
+                >
+                  {item.state}
+                </li>
               ))}
             </ul>
             <ul>
               {contractor.services.map((item, index) => (
-                <li key={index} className="inline-block rounded-full bg-green-100 px-2 text-xs text-green-800 mr-1">{item.serviceName}</li>
+                <li
+                  key={index}
+                  className="mr-1 inline-block rounded-full bg-green-100 px-2 text-xs text-green-800"
+                >
+                  {item.serviceName}
+                </li>
               ))}
             </ul>
-            <a href={contractor.website} target="_blank" rel="noreferrer" className="block underline hover:text-blue-500" onClick={ e => e.stopPropagation() }>{contractor.website}</a>
+            <a
+              href={contractor.website}
+              target="_blank"
+              rel="noreferrer"
+              className="block underline hover:text-blue-500"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {contractor.website}
+            </a>
           </div>
           <div className="grow px-4 pb-4 text-sm">
             <PhoneLink phoneNumber={contractor.phone} />
@@ -92,19 +118,21 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
-  const CONTRACTORS = useLoaderData<typeof loader>().contractors;
+  const contractors = deserializeContractors(
+    useLoaderData<typeof loader>().contractors as SerializedContractor[],
+  );
   const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [filteredContractors, setFilteredContractors] = useState(CONTRACTORS);
+  const [filteredContractors, setFilteredContractors] = useState(contractors);
 
   useEffect(() => {
     const newFilteredContractors = filterContractors(
-      CONTRACTORS,
+      contractors,
       selectedState ?? "",
       selectedServices,
     );
     setFilteredContractors(newFilteredContractors);
-  }, [selectedState, selectedServices]);
+  }, [contractors, selectedState, selectedServices]);
 
   interface Option<Type> {
     value: Type;
@@ -114,7 +142,9 @@ export default function ContractorList() {
     setSelectedState(option?.value);
   };
 
-  const onSelectedServicesChanged = (options: readonly Option<string>[] | []) => {
+  const onSelectedServicesChanged = (
+    options: readonly Option<string>[] | [],
+  ) => {
     setSelectedServices(options.map((option) => option.value));
   };
 

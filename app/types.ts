@@ -17,6 +17,8 @@ export interface Service {
 }
 
 export interface Contractor {
+  createdAt: Date;
+  updatedAt: Date;
   name: string;
   email: string;
   phone: string;
@@ -29,3 +31,27 @@ export interface Contractor {
   statesServed: State[];
   services: Service[];
 }
+
+export type SerializedContractor = Omit<
+  Contractor,
+  "createdAt" | "updatedAt"
+> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const deserializeContractor = (
+  serialized: SerializedContractor,
+): Contractor => {
+  return {
+    ...serialized,
+    createdAt: new Date(serialized.createdAt),
+    updatedAt: new Date(serialized.createdAt),
+  };
+};
+
+export const deserializeContractors = (
+  serialized: SerializedContractor[],
+): Contractor[] => {
+  return serialized.map((obj) => deserializeContractor(obj));
+};
