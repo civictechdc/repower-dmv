@@ -118,9 +118,10 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
-  const contractors = deserializeContractors(
+  const initialContractors = deserializeContractors(
     useLoaderData<typeof loader>().contractors as SerializedContractor[],
   );
+  const [contractors] = useState(initialContractors);
   const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(contractors);
