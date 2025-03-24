@@ -30,13 +30,13 @@ const PhoneLink = (props: PhoneLinkProps) => {
 
 const filterContractors = (
   contractors: Contractor[],
-  selectedState: State | undefined,
-  selectedServices: Service[],
+  selectedState: string | undefined,
+  selectedServices: string[],
 ) => {
   const filtered = contractors.filter((contractor) => {
     const matchesSelectedState =
       selectedState === undefined ||
-      contractor.statesServed.some(s => s.state == selectedState);
+      contractor.statesServed.some((s: State) => s.state == selectedState);
 
     const matchesSelectedServices =
       selectedServices.length === 0 ||
@@ -76,7 +76,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 <li key={index} className="inline-block rounded-full bg-green-100 px-2 text-xs text-green-800 mr-1">{item.serviceName}</li>
               ))}
             </ul>
-            <a href={contractor.website} target="_blank" className="block underline hover:text-blue-500" onClick={ e => e.stopPropagation() }>{contractor.website}</a>
+            <a href={contractor.website} target="_blank" rel="noreferrer" className="block underline hover:text-blue-500" onClick={ e => e.stopPropagation() }>{contractor.website}</a>
           </div>
           <div className="grow px-4 pb-4 text-sm">
             <PhoneLink phoneNumber={contractor.phone} />
@@ -93,7 +93,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 
 export default function ContractorList() {
   const CONTRACTORS = useLoaderData<typeof loader>().contractors;
-  const [selectedState, setSelectedState] = useState<State | undefined>();
+  const [selectedState, setSelectedState] = useState<string | undefined>();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(CONTRACTORS);
 
@@ -110,11 +110,11 @@ export default function ContractorList() {
     value: Type;
     label: Type;
   }
-  const onSelectedStateChanged = (option: Option<State> | null) => {
+  const onSelectedStateChanged = (option: Option<string> | null) => {
     setSelectedState(option?.value);
   };
 
-  const onSelectedServicesChanged = (options: readonly Option<Service>[]) => {
+  const onSelectedServicesChanged = (options: readonly Option<string>[]) => {
     setSelectedServices(options.map((option) => option.value));
   };
 
@@ -125,7 +125,7 @@ export default function ContractorList() {
       </h1>
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>
-        <Select<Option<State>>
+        <Select<Option<string>>
           isClearable
           placeholder="Anywhere"
           options={STATES.map((state) => ({
@@ -134,7 +134,7 @@ export default function ContractorList() {
           }))}
           onChange={onSelectedStateChanged}
         />
-        <Select<Option<Service>, true>
+        <Select<Option<string>, true>
           isMulti
           placeholder="Any service"
           options={SERVICES.map((service) => ({
@@ -145,7 +145,7 @@ export default function ContractorList() {
         />
       </div>
       <ul className="mt-6 space-y-4">
-        {filteredContractors.map((contractor) => (
+        {filteredContractors.map((contractor: Contractor) => (
           <ContractorBlock contractor={contractor} key={contractor.name} />
         ))}
       </ul>

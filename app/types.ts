@@ -8,8 +8,13 @@ export const SERVICES = [
   "Appliances",
 ];
 
-export type State = (typeof STATES)[number];
-export type Service = (typeof SERVICES)[number];
+export interface State {
+  state: string;
+}
+
+export interface Service {
+  serviceName: string;
+}
 
 export interface Contractor {
   name: string;
@@ -21,6 +26,6 @@ export interface Contractor {
   city: string;
   state: string;
   zip: string;
-  statesServed: string[];
+  statesServed: State[];
   services: Service[];
 }
