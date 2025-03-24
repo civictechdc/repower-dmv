@@ -7,7 +7,7 @@ import Select from "react-select";
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import { STATES, SERVICES, State, Service, Contractor } from "../types";
+import { STATES, SERVICES, State, Contractor } from "../types";
 
 
 export async function loader() {
@@ -30,12 +30,12 @@ const PhoneLink = (props: PhoneLinkProps) => {
 
 const filterContractors = (
   contractors: Contractor[],
-  selectedState: string | undefined,
+  selectedState: string | "",
   selectedServices: string[],
 ) => {
   const filtered = contractors.filter((contractor) => {
     const matchesSelectedState =
-      selectedState === undefined ||
+      selectedState === "" ||
       contractor.statesServed.some((s: State) => s.state == selectedState);
 
     const matchesSelectedServices =
@@ -93,14 +93,14 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 
 export default function ContractorList() {
   const CONTRACTORS = useLoaderData<typeof loader>().contractors;
-  const [selectedState, setSelectedState] = useState<string | undefined>();
+  const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(CONTRACTORS);
 
   useEffect(() => {
     const newFilteredContractors = filterContractors(
       CONTRACTORS,
-      selectedState,
+      selectedState ?? "",
       selectedServices,
     );
     setFilteredContractors(newFilteredContractors);
@@ -110,11 +110,11 @@ export default function ContractorList() {
     value: Type;
     label: Type;
   }
-  const onSelectedStateChanged = (option: Option<string> | null) => {
+  const onSelectedStateChanged = (option: Option<string> | null | void) => {
     setSelectedState(option?.value);
   };
 
-  const onSelectedServicesChanged = (options: readonly Option<string>[]) => {
+  const onSelectedServicesChanged = (options: readonly Option<string>[] | []) => {
     setSelectedServices(options.map((option) => option.value));
   };
 
