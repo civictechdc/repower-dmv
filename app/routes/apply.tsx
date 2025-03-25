@@ -3,6 +3,7 @@ import type { MetaFunction } from "@remix-run/node";
 import content from "../content/apply.json";
 import styles from "../styles/apply.module.css";
 import { SERVICES, STATES } from "../types";
+import { Form } from "@remix-run/react";
 
 export const meta: MetaFunction = () => [
   { title: "Apply as a Contractor | re:Power DMV" },
@@ -21,10 +22,14 @@ const StateCheckboxes = (props: StateCheckboxProps) => {
           <input
             type="checkbox"
             id={`${idPrefix}_${item.toLocaleLowerCase()}`}
+            className={styles["form-checkbox-input"]}
             name={item.toLocaleLowerCase()}
             value={item}
           />
-          <label htmlFor={`${idPrefix}_${item.toLocaleLowerCase()}`}>
+          <label
+            htmlFor={`${idPrefix}_${item.toLocaleLowerCase()}`}
+            className={styles["form-checkbox-label"]}
+          >
             {item}
           </label>
         </div>
@@ -38,13 +43,13 @@ const ContactInfoBlock = () => {
     <div>
       <h3>Contact Information</h3>
       <div>
-        <label htmlFor="name" className={styles["form-label"]}>
+        <label htmlFor="name" className={styles["form-input-label"]}>
           Company Name
         </label>
         <input className={styles["form-input"]} id="name" type="text"></input>
       </div>
       <div>
-        <label htmlFor="website" className={styles["form-label"]}>
+        <label htmlFor="website" className={styles["form-input-label"]}>
           Company Website
         </label>
         <input
@@ -55,13 +60,13 @@ const ContactInfoBlock = () => {
         ></input>
       </div>
       <div>
-        <label htmlFor="email" className={styles["form-label"]}>
+        <label htmlFor="email" className={styles["form-input-label"]}>
           Contact Email
         </label>
         <input className={styles["form-input"]} id="email" type="text"></input>
       </div>
       <div>
-        <label htmlFor="phone" className={styles["form-label"]}>
+        <label htmlFor="phone" className={styles["form-input-label"]}>
           Contact Phone
         </label>
         <input className={styles["form-input"]} id="phone" type="text"></input>
@@ -98,7 +103,10 @@ const ServiceInfoBlock = () => {
               name={item.toLocaleLowerCase().replace(/ /g, "_")}
               value={item}
             />
-            <label htmlFor={item.toLocaleLowerCase().replace(/ /g, "_")}>
+            <label
+              htmlFor={item.toLocaleLowerCase().replace(/ /g, "_")}
+              className={styles["form-checkbox-label"]}
+            >
               {item}
             </label>
           </div>
@@ -111,7 +119,9 @@ const ServiceInfoBlock = () => {
 const SubmitBlock = () => {
   return (
     <div>
-      <button type="button">Submit</button>
+      <button type="submit" className={styles["form-submit-button"]}>
+        Submit
+      </button>
     </div>
   );
 };
@@ -122,12 +132,12 @@ export default function Application() {
       <div className="flex w-full flex-col items-center justify-center">
         <h1>{content.heading}</h1>
         <div className="flex w-2/3">
-          <form className="w-full">
+          <Form method="post">
             <ContactInfoBlock />
             <StateInfoBlock />
             <ServiceInfoBlock />
             <SubmitBlock />
-          </form>
+          </Form>
         </div>
       </div>
     </main>
