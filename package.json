@@ -17,12 +17,12 @@
     "start": "remix-serve ./build/index.js",
     "start:mocks": "NODE_OPTIONS=\"--import ./mocks/index.js\" remix-serve ./build/index.js",
     "test": "vitest --run",
-    "test:auto": "vitest",
+    "test:dev": "vitest",
     "test:e2e:dev": "start-server-and-test dev http://localhost:3000 \"npx cypress open\"",
     "pretest:e2e:run": "npm run build",
     "test:e2e:run": "cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 \"npx cypress run\"",
     "typecheck": "tsc && tsc -p cypress",
-    "validate": "npm-run-all --parallel \"test -- --run\" lint typecheck test:e2e:run"
+    "validate": "npm-run-all --parallel test lint typecheck test:e2e:run"
   },
   "eslintIgnore": [
     "/node_modules",
