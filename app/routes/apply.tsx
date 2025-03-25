@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 
 import content from "../content/apply.json";
+import styles from "../styles/apply.module.css";
 import { SERVICES, STATES } from "../types";
 
 export const meta: MetaFunction = () => [
@@ -37,20 +38,33 @@ const ContactInfoBlock = () => {
     <div>
       <h3>Contact Information</h3>
       <div>
-        <label htmlFor="name">Company Name</label>
-        <input className="w-full border" id="name" type="text"></input>
+        <label htmlFor="name" className={styles["form-label"]}>
+          Company Name
+        </label>
+        <input className={styles["form-input"]} id="name" type="text"></input>
       </div>
       <div>
-        <label htmlFor="website">Company Website</label>
-        <input className="w-full border" id="website" type="text"></input>
+        <label htmlFor="website" className={styles["form-label"]}>
+          Company Website
+        </label>
+        <input
+          className={styles["form-input"]}
+          id="website"
+          placeholder="https://"
+          type="text"
+        ></input>
       </div>
       <div>
-        <label htmlFor="email">Contact Email</label>
-        <input className="w-full border" id="email" type="text"></input>
+        <label htmlFor="email" className={styles["form-label"]}>
+          Contact Email
+        </label>
+        <input className={styles["form-input"]} id="email" type="text"></input>
       </div>
       <div>
-        <label htmlFor="phone">Contact Phone</label>
-        <input className="w-full border" id="phone" type="text"></input>
+        <label htmlFor="phone" className={styles["form-label"]}>
+          Contact Phone
+        </label>
+        <input className={styles["form-input"]} id="phone" type="text"></input>
       </div>
     </div>
   );
@@ -105,14 +119,16 @@ const SubmitBlock = () => {
 export default function Application() {
   return (
     <main className="min-h screen relative">
-      <h1>{content.heading}</h1>
-      <div>
-        <form>
-          <ContactInfoBlock />
-          <StateInfoBlock />
-          <ServiceInfoBlock />
-          <SubmitBlock />
-        </form>
+      <div className="flex w-full flex-col items-center justify-center">
+        <h1>{content.heading}</h1>
+        <div className="flex w-2/3">
+          <form className="w-full">
+            <ContactInfoBlock />
+            <StateInfoBlock />
+            <ServiceInfoBlock />
+            <SubmitBlock />
+          </form>
+        </div>
       </div>
     </main>
   );
