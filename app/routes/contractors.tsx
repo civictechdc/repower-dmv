@@ -7,14 +7,7 @@ import Select from "react-select";
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import {
-  STATES,
-  SERVICES,
-  State,
-  Contractor,
-  SerializedContractor,
-  deserializeContractors,
-} from "../types";
+import { STATES, SERVICES, State, Contractor } from "../types";
 
 export async function loader() {
   const data = await getContractors();
@@ -42,12 +35,12 @@ const filterContractors = (
   const filtered = contractors.filter((contractor) => {
     const matchesSelectedState =
       selectedState === "" ||
-      contractor.statesServed.some((s: State) => s.state == selectedState);
+      contractor.statesServed.some((s: State) => s.name == selectedState);
 
     const matchesSelectedServices =
       selectedServices.length === 0 ||
       contractor.services.some((service) =>
-        selectedServices.includes(service.serviceName),
+        selectedServices.includes(service.name),
       );
 
     return matchesSelectedState && matchesSelectedServices;
@@ -80,7 +73,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                   key={index}
                   className="mr-1 inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800"
                 >
-                  {item.state}
+                  {item.name}
                 </li>
               ))}
             </ul>
@@ -90,7 +83,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                   key={index}
                   className="mr-1 inline-block rounded-full bg-green-100 px-2 text-xs text-green-800"
                 >
-                  {item.serviceName}
+                  {item.name}
                 </li>
               ))}
             </ul>
@@ -118,9 +111,8 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
-  const initialContractors = deserializeContractors(
-    useLoaderData<typeof loader>().contractors as SerializedContractor[],
-  );
+  const initialContractors = useLoaderData<typeof loader>()
+    .contractors as Contractor[];
   const [contractors] = useState(initialContractors);
   const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);

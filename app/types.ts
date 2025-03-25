@@ -9,16 +9,21 @@ export const SERVICES = [
 ];
 
 export interface State {
-  state: string;
+  name: string;
 }
 
 export interface Service {
-  serviceName: string;
+  name: string;
+  description: string;
+}
+
+export interface Certification {
+  name: string;
+  shortName: string;
+  description: string;
 }
 
 export interface Contractor {
-  createdAt: Date;
-  updatedAt: Date;
   name: string;
   email: string;
   phone: string;
@@ -30,28 +35,5 @@ export interface Contractor {
   zip: string;
   statesServed: State[];
   services: Service[];
+  certifications: Certification[];
 }
-
-export type SerializedContractor = Omit<
-  Contractor,
-  "createdAt" | "updatedAt"
-> & {
-  createdAt: string;
-  updatedAt: string;
-};
-
-export const deserializeContractor = (
-  serialized: SerializedContractor,
-): Contractor => {
-  return {
-    ...serialized,
-    createdAt: new Date(serialized.createdAt),
-    updatedAt: new Date(serialized.createdAt),
-  };
-};
-
-export const deserializeContractors = (
-  serialized: SerializedContractor[],
-): Contractor[] => {
-  return serialized.map((obj) => deserializeContractor(obj));
-};
