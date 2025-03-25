@@ -128,10 +128,6 @@ afterEach(() => {
 
 That way, we can keep your local db clean and keep your tests isolated from one another.
 
-### Vitest
-
-For lower level tests of utilities and individual components, we use `vitest`. We have DOM-specific assertion helpers via [`@testing-library/jest-dom`](https://testing-library.com/jest-dom).
-
 ### Type Checking
 
 This project uses TypeScript. It's recommended to get TypeScript set up for your editor to get a really great in-editor experience with type checking and auto-complete. To run type checking across the whole project, run `npm run typecheck`.
