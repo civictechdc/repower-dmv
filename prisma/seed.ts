@@ -103,10 +103,6 @@ async function seed() {
   ];
   await prisma.certification.createMany({ data: certifications });
 
-  const serviceRecords = await prisma.service.findMany();
-  const certRecords = await prisma.certification.findMany();
-  const stateRecords = await prisma.state.findMany();
-
   // Generate states
   const states: Prisma.StateCreateInput[] = [
     { name: "DC" },
@@ -114,6 +110,10 @@ async function seed() {
     { name: "VA" },
   ];
   await prisma.state.createMany({ data: states });
+
+  const serviceRecords = await prisma.service.findMany();
+  const certRecords = await prisma.certification.findMany();
+  const stateRecords = await prisma.state.findMany();
 
   // Generate contractors with fake data
   // Seed faker so that it generates the same data for everyone
