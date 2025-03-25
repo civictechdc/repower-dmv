@@ -1,13 +1,13 @@
 import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import { STATES, SERVICES, State, Contractor } from "../types";
+import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
 
 export async function loader() {
   const data = await getContractors();
@@ -31,6 +31,7 @@ const filterContractors = (
   contractors: Contractor[],
   selectedState: string | "",
   selectedServices: string[],
+  selectedCertifications: string[],
 ) => {
   const filtered = contractors.filter((contractor) => {
     const matchesSelectedState =
@@ -43,7 +44,13 @@ const filterContractors = (
         selectedServices.includes(service.name),
       );
 
-    return matchesSelectedState && matchesSelectedServices;
+    const matchesSelectedCertifications =
+      selectedCertifications.length === 0 ||
+      contractor.certifications.some((cert) =>
+        selectedCertifications.includes(cert.shortName),
+      );
+
+    return matchesSelectedState && matchesSelectedServices && matchesSelectedCertifications;
   });
   return filtered;
 };
@@ -56,22 +63,22 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   const { contractor } = props;
   return (
     <li key={contractor.name} className="flex justify-center">
-      <div className="relative w-full max-w-2xl cursor-pointer items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
-        <h2 className="p-2 text-xl font-bold">{contractor.name}</h2>
+      <div className="relative w-full max-w-3xl items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
+        <Link to={"/contractors/"+contractor.id}><h2 className="inline-block p-2 text-xl font-bold hover:underline">{contractor.name}</h2></Link>
         <div className="flex">
-          <div className="flex-shrink-0 pb-2 pl-2">
+          <Link to={"/contractors/"+contractor.id} className="flex-shrink-0 pb-2 pl-2 cursor-pointer">
             <img
-              className="h-24 w-24 object-cover"
+              className="h-24 w-24 object-cover hover:shadow-lg"
               src="https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg"
               alt="Placeholder"
             />
-          </div>
+          </Link>
           <div className="grow px-4 pb-4">
             <ul>
               {contractor.statesServed.map((item, index) => (
                 <li
                   key={index}
-                  className="mr-1 inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800"
+                  className="mr-1 inline-block rounded-full bg-green-100 px-2 text-xs text-green-800"
                 >
                   {item.name}
                 </li>
@@ -81,9 +88,20 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               {contractor.services.map((item, index) => (
                 <li
                   key={index}
-                  className="mr-1 inline-block rounded-full bg-green-100 px-2 text-xs text-green-800"
+                  className="mr-1 inline-block rounded-full bg-blue-100 px-2 text-xs text-blue-800"
                 >
                   {item.name}
+                </li>
+              ))}
+            </ul>
+            <ul>
+              {contractor.certifications.map((item, index) => (
+                <li
+                  key={index}
+                  className="mr-1 inline-block rounded-full bg-orange-100 px-2 text-xs text-orange-800"
+                  title={item.name}
+                >
+                  {item.shortName}
                 </li>
               ))}
             </ul>
@@ -91,10 +109,9 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               href={contractor.website}
               target="_blank"
               rel="noreferrer"
-              className="block underline hover:text-blue-500"
-              onClick={(e) => e.stopPropagation()}
+              className="inline-block underline text-sm hover:text-blue-500"
             >
-              {contractor.website}
+              Website
             </a>
           </div>
           <div className="grow px-4 pb-4 text-sm">
@@ -116,6 +133,7 @@ export default function ContractorList() {
   const [contractors] = useState(initialContractors);
   const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedCertifications, setSelectedCertifications] = useState<string[]>([]);
   const [filteredContractors, setFilteredContractors] = useState(contractors);
 
   useEffect(() => {
@@ -123,9 +141,10 @@ export default function ContractorList() {
       contractors,
       selectedState ?? "",
       selectedServices,
+      selectedCertifications,
     );
     setFilteredContractors(newFilteredContractors);
-  }, [contractors, selectedState, selectedServices]);
+  }, [contractors, selectedState, selectedServices, selectedCertifications]);
 
   interface Option<Type> {
     value: Type;
@@ -141,6 +160,12 @@ export default function ContractorList() {
     setSelectedServices(options.map((option) => option.value));
   };
 
+  const onSelectedCertificationsChanged = (
+    options: readonly Option<string>[] | [],
+  ) => {
+    setSelectedCertifications(options.map((option) => option.value));
+  };
+
   return (
     <main className="relative min-h-screen bg-white p-8">
       <h1 className="text-center text-4xl font-extrabold tracking-tight text-gray-900">
@@ -149,6 +174,9 @@ export default function ContractorList() {
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>
         <Select<Option<string>>
+          classNames={{
+            control: () => "!border-2 !border-green-200",
+          }}
           isClearable
           placeholder="Anywhere"
           options={STATES.map((state) => ({
@@ -158,6 +186,9 @@ export default function ContractorList() {
           onChange={onSelectedStateChanged}
         />
         <Select<Option<string>, true>
+          classNames={{
+            control: () => "!border-2 !border-blue-200",
+          }}
           isMulti
           placeholder="Any service"
           options={SERVICES.map((service) => ({
@@ -165,6 +196,18 @@ export default function ContractorList() {
             label: service,
           }))}
           onChange={onSelectedServicesChanged}
+        />
+        <Select<Option<string>, true>
+          classNames={{
+            control: () => "!border-2 !border-orange-200",
+          }}
+          isMulti
+          placeholder="Any certifications"
+          options={CERTIFICATIONS.map((cert) => ({
+            value: cert,
+            label: cert,
+          }))}
+          onChange={onSelectedCertificationsChanged}
         />
       </div>
       <ul className="mt-6 space-y-4">

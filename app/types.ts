@@ -2,10 +2,16 @@ export const STATES = ["DC", "MD", "VA"] as const;
 export const SERVICES = [
   "Energy Audit",
   "Weatherization",
-  "HVAC",
+  "HVAC / Heat Pump",
   "Electrical",
   "Water Heater",
   "Appliances",
+];
+export const CERTIFICATIONS = [
+  "CEA",
+  "HEP",
+  "BPI-ALCI",
+  "BPI-ACHPP",
 ];
 
 export interface State {
@@ -24,6 +30,7 @@ export interface Certification {
 }
 
 export interface Contractor {
+  id: string;
   name: string;
   email: string;
   phone: string;
