@@ -22,7 +22,7 @@ DROP TABLE "StatesServed";
 PRAGMA foreign_keys=on;
 
 -- CreateTable
-CREATE TABLE "States" (
+CREATE TABLE "State" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -38,11 +38,11 @@ CREATE TABLE "_ContractorToService" (
 );
 
 -- CreateTable
-CREATE TABLE "_ContractorToStates" (
+CREATE TABLE "_ContractorToState" (
     "A" TEXT NOT NULL,
     "B" INTEGER NOT NULL,
-    CONSTRAINT "_ContractorToStates_A_fkey" FOREIGN KEY ("A") REFERENCES "Contractor" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_ContractorToStates_B_fkey" FOREIGN KEY ("B") REFERENCES "States" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "_ContractorToState_A_fkey" FOREIGN KEY ("A") REFERENCES "Contractor" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_ContractorToState_B_fkey" FOREIGN KEY ("B") REFERENCES "State" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -79,7 +79,7 @@ PRAGMA foreign_keys=ON;
 PRAGMA defer_foreign_keys=OFF;
 
 -- CreateIndex
-CREATE UNIQUE INDEX "States_name_key" ON "States"("name");
+CREATE UNIQUE INDEX "State_name_key" ON "State"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ContractorToService_AB_unique" ON "_ContractorToService"("A", "B");
@@ -88,10 +88,10 @@ CREATE UNIQUE INDEX "_ContractorToService_AB_unique" ON "_ContractorToService"("
 CREATE INDEX "_ContractorToService_B_index" ON "_ContractorToService"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_ContractorToStates_AB_unique" ON "_ContractorToStates"("A", "B");
+CREATE UNIQUE INDEX "_ContractorToState_AB_unique" ON "_ContractorToState"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_ContractorToStates_B_index" ON "_ContractorToStates"("B");
+CREATE INDEX "_ContractorToState_B_index" ON "_ContractorToState"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_CertificationToContractor_AB_unique" ON "_CertificationToContractor"("A", "B");

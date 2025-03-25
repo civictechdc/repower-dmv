@@ -54,7 +54,7 @@ model Contractor {
   
   certifications   Certification[]
   services         Service[]
-  statesServed     States[]
+  statesServed     State[]
 }
 
 model Certification {
@@ -84,7 +84,7 @@ model Service {
   @@unique(name)
 }
 
-model States {
+model State {
   id              Int        @id @default(autoincrement())
   name           String
 
