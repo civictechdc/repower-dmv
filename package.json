@@ -5,19 +5,24 @@
   "type": "module",
   "scripts": {
     "build": "remix build",
+    "db:console": "sqlite3 prisma/data.db",
+    "db:create-migration": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
     "dev": "remix dev -c \"npm run dev:serve\"",
     "dev:serve": "cross-env NODE_OPTIONS=\"--import ./mocks/index.js\" remix-serve ./build/index.js",
     "format": "prettier --write .",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "lint:fix": "eslint . --fix",
     "setup": "prisma generate && prisma migrate deploy && prisma db seed",
     "start": "remix-serve ./build/index.js",
     "start:mocks": "NODE_OPTIONS=\"--import ./mocks/index.js\" remix-serve ./build/index.js",
-    "test": "vitest",
+    "test": "vitest --run",
+    "test:dev": "vitest",
     "test:e2e:dev": "start-server-and-test dev http://localhost:3000 \"npx cypress open\"",
     "pretest:e2e:run": "npm run build",
     "test:e2e:run": "cross-env PORT=8811 start-server-and-test start:mocks http://localhost:8811 \"npx cypress run\"",
     "typecheck": "tsc && tsc -p cypress",
-    "validate": "npm-run-all --parallel \"test -- --run\" lint typecheck test:e2e:run"
+    "validate": "npm-run-all --parallel test lint typecheck test:e2e:run"
   },
   "eslintIgnore": [
     "/node_modules",
@@ -25,6 +30,7 @@
     "/public/build"
   ],
   "dependencies": {
+    "@faker-js/faker": "^9.6.0",
     "@prisma/client": "^6.4.1",
     "@remix-run/css-bundle": "^2.15.3",
     "@remix-run/node": "^2.15.3",
@@ -38,9 +44,8 @@
     "tiny-invariant": "^1.3.3"
   },
   "devDependencies": {
-    "@faker-js/faker": "^9.5.1",
     "@remix-run/dev": "^2.15.3",
-    "@testing-library/cypress": "^10.0.2",
+    "@testing-library/cypress": "^10.0.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/eslint": "^8.56.12",
@@ -87,7 +92,7 @@
     "esbuild": "^0.25.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
