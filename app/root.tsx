@@ -10,10 +10,10 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import Navbar from "~/components/nav";
 import { getUser } from "~/session.server";
 import stylesheet from "~/tailwind.css";
 
-import Navbar from "~/components/nav";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },

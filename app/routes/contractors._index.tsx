@@ -3,8 +3,8 @@ import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
-import Heading from "~/components/heading";
 
+import Heading from "~/components/heading";
 import { getContractors } from "~/models/contractor.server";
 
 import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
