@@ -3,10 +3,10 @@ import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
+import Heading from "~/components/heading";
 
 import { getContractors } from "~/models/contractor.server";
 
-import content from "../content/contractors.json";
 import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
 
 export async function loader() {
@@ -167,10 +167,8 @@ export default function ContractorList() {
   };
 
   return (
-    <main className="relative min-h-screen bg-white p-8">
-      <h1 className="text-center text-4xl font-extrabold tracking-tight text-gray-900">
-        {content.heading}
-      </h1>
+    <div>
+      <Heading title="Contractor List" />
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>
         <Select<Option<string>>
@@ -215,6 +213,6 @@ export default function ContractorList() {
           <ContractorBlock contractor={contractor} key={contractor.name} />
         ))}
       </ul>
-    </main>
+    </div>
   );
 }
