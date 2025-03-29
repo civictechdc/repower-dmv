@@ -16,8 +16,8 @@ function Navbar() {
         </NavLink>
         <div className="min-w-4 grow">
         </div>
-        <div className="cursor-pointer md:hidden" onClick={ toggleMobileMenu }><i className={`fa fa-2x aria-hidden='true' ${isMobileMenuToggled ? 'fa-times' : 'fa-bars'}`}></i></div>
-        <div className={`md:inline-block grow md:grow-0 basis-full md:basis-auto mt-4 md:mt-0 ${isMobileMenuToggled ? 'inline-block' : 'hidden'}`} onClick={ () => setIsMobileMenuToggled(false) }>
+        <div className="cursor-pointer md:hidden" onClick={ toggleMobileMenu } onKeyDown={ toggleMobileMenu } role="presentation"><i className={`fa fa-2x aria-hidden='true' ${isMobileMenuToggled ? 'fa-times' : 'fa-bars'}`}></i></div>
+        <div className={`md:inline-block grow md:grow-0 basis-full md:basis-auto mt-4 md:mt-0 ${isMobileMenuToggled ? 'inline-block' : 'hidden'}`} onClick={ () => setIsMobileMenuToggled(false) } onKeyDown={ () => setIsMobileMenuToggled(false) } role="presentation">
             <ul className="flex flex-col md:flex-row justify-end text-center text-nowrap text-lg [&>li]:inline-block gap-y-4 gap-x-8 [&>li:hover]:text-gray-300">
                 <li className="inline-block">
                 <NavLink
