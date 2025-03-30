@@ -10,7 +10,6 @@ import {
 
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  //for now expect a uuid but in the future we'll want to allow contractor name
   const contractorId = params.contractorId as string;
   return json(await getContractorById(contractorId));
 }
@@ -32,8 +31,8 @@ const PhoneLink = (props: PhoneLinkProps) => {
 export default function ContractorDetails() {
   const contractor = useLoaderData<typeof loader>() as Contractor;
   return (
-    <main className="relative min-h-screen bg-white p-8">
-      <Link to="/contractors" className="mb-4"><div className="inline-block mb-4 p-2 bg-gray-300 rounded-lg hover:shadow-md">Back to Contractors List</div></Link>
+    <div>
+      <Link to="/contractors" className="mb-4"><div className="inline-block mb-4 p-2 bg-gray-300 rounded-lg hover:shadow-md">Back to Contractor List</div></Link>
       <div className="relative w-full max-w-3xl items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
         <h2 className="inline-block p-2 text-xl font-bold">{contractor.name}</h2>
         <div className="flex">
@@ -94,6 +93,6 @@ export default function ContractorDetails() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
