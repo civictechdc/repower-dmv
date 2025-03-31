@@ -59,8 +59,9 @@ module.exports = {
       plugins: ["@typescript-eslint", "import"],
       parser: "@typescript-eslint/parser",
       parserOptions: {
-        project: "./tsconfig.json",
-        tsconfigRootDir: "./",
+        project: ["./tsconfig.json"],
+        // eslint-disable-next-line no-undef
+        tsconfigRootDir: __dirname,
       },
       settings: {
         "import/internal-regex": "^~/",
@@ -90,13 +91,6 @@ module.exports = {
           },
         ],
       },
-    },
-
-    // Markdown
-    {
-      files: ["**/*.md"],
-      plugins: ["markdown"],
-      extends: ["plugin:markdown/recommended-legacy", "prettier"],
     },
 
     // Jest/Vitest
