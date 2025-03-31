@@ -118,8 +118,12 @@ module.exports = {
 
     // Cypress
     {
-      files: ["cypress/**/*.ts"],
-      plugins: ["cypress"],
+      files: ["cypress/**/*.ts", "cypress.config.ts"],
+      plugins: ["cypress", "@typescript-eslint"],
+      parser: "@typescript-eslint/parser",
+      parserOptions: {
+        project: null, // Disable TypeScript project checking for Cypress files
+      },
       extends: ["plugin:cypress/recommended", "prettier"],
     },
 
