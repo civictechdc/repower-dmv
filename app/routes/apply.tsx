@@ -5,15 +5,14 @@ import styles from "../styles/apply.module.css";
 import { SERVICES, STATES, Contractor, Service } from "../types";
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { data, redirect } from "@remix-run/node";
 
 export const meta: MetaFunction = () => [
   { title: "Apply as a Contractor | re:Power DMV" },
 ];
 
-// const actionData = useActionData<typeof action>();
-
 interface ContractorBlockProps {
+  actionData: any;
   contractor?: Contractor;
   setContractor: any;
 }
@@ -30,7 +29,7 @@ const handleContractorOnChange = (
 };
 
 const ContractorBlock = (props: ContractorBlockProps) => {
-  const { contractor, setContractor } = props;
+  const { actionData, contractor, setContractor } = props;
   return (
     <div>
       <div>
@@ -40,103 +39,156 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             Company Name <span className="text-red-500">*</span>
           </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.name
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="name"
             name="name"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
+          {actionData?.errors?.name ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.name}
+            </p>
+          ) : null}
         </div>
         <div>
           <label htmlFor="email" className={styles["form-input-heading-label"]}>
-            Contact Email
+            Contact Email <span className="text-red-500">*</span>
           </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.email
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="email"
-            name="text"
+            name="email"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
+          {actionData?.errors?.email ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.email}
+            </p>
+          ) : null}
         </div>
         <div>
           <label htmlFor="phone" className={styles["form-input-heading-label"]}>
-            Contact Phone
+            Contact Phone <span className="text-red-500">*</span>
           </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.phone
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="phone"
             name="phone"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
+          {actionData?.errors?.phone ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.phone}
+            </p>
+          ) : null}
         </div>
         <div>
           <label
             htmlFor="website"
             className={styles["form-input-heading-label"]}
           >
-            Company Website
+            Company Website <span className="text-red-500">*</span>
           </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.website
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="website"
             name="website"
             placeholder="https://"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
+          {actionData?.errors?.website ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.website}
+            </p>
+          ) : null}
         </div>
       </div>
       <div>
         <h3>Company Address</h3>
         <div>
+          <label htmlFor="line1" className={styles["form-input-heading-label"]}>
+            Street Address <span className="text-red-500">*</span>
+          </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.addressLine1
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="line1"
             name="addressLine1"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
-          <label
-            htmlFor="line1"
-            className={styles["form-input-description-label"]}
-          >
-            Street Address
-          </label>
+          {actionData?.errors?.addressLine1 ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.addressLine1}
+            </p>
+          ) : null}
         </div>
         <div>
+          <label htmlFor="line2" className={styles["form-input-heading-label"]}>
+            Address Line 2
+          </label>
           <input
-            className={styles["form-input"]}
             id="line2"
             name="addressLine2"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
-          <label
-            htmlFor="line2"
-            className={styles["form-input-description-label"]}
-          >
-            Address Line 2
-          </label>
         </div>
         <div className="flex w-full flex-row">
           <div className="w-1/2">
+            <label
+              htmlFor="city"
+              className={styles["form-input-description-label"]}
+            >
+              City <span className="text-red-500">*</span>
+            </label>
             <input
-              className={styles["form-input"]}
+              className={
+                actionData?.errors?.city
+                  ? styles["form-input-invalid"]
+                  : styles["form-input"]
+              }
               id="city"
               name="city"
               type="text"
               onChange={(e) => handleContractorOnChange(props, e)}
             />
-            <label
-              htmlFor="city"
-              className={styles["form-input-description-label"]}
-            >
-              City
-            </label>
+            {actionData?.errors?.city ? (
+              <p className={styles["form-input-error"]}>
+                {actionData?.errors.city}
+              </p>
+            ) : null}
           </div>
           <div className="flex w-1/2 flex-col">
+            <label
+              htmlFor="stateSelect"
+              className={styles["form-input-description-label"]}
+            >
+              State <span className="text-red-500">*</span>
+            </label>
             <select
               id="stateSelect"
               name="state"
@@ -151,28 +203,36 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 </option>
               ))}
             </select>
-            <label
-              htmlFor="stateSelect"
-              className={styles["form-input-description-label"]}
-            >
-              State
-            </label>
+            {actionData?.errors?.state ? (
+              <p className={styles["form-input-error"]}>
+                {actionData?.errors.state}
+              </p>
+            ) : null}
           </div>
         </div>
         <div>
+          <label
+            htmlFor="zipcode"
+            className={styles["form-input-heading-label"]}
+          >
+            ZIP Code <span className="text-red-500">*</span>
+          </label>
           <input
-            className={styles["form-input"]}
+            className={
+              actionData?.errors?.zip
+                ? styles["form-input-invalid"]
+                : styles["form-input"]
+            }
             id="zip"
             name="zip"
             type="text"
             onChange={(e) => handleContractorOnChange(props, e)}
           />
-          <label
-            htmlFor="zipcode"
-            className={styles["form-input-description-label"]}
-          >
-            ZIP Code
-          </label>
+          {actionData?.errors?.zip ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.zip}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
@@ -305,9 +365,7 @@ const SubmitBlock = (props: ContractorBlockProps) => {
       <button
         type="submit"
         className={styles["form-submit-button"]}
-        onClick={(e) => {
-          console.log(contractor);
-        }}
+        // onClick={(e) => handleSubmit(e)}
       >
         Submit
       </button>
@@ -316,6 +374,7 @@ const SubmitBlock = (props: ContractorBlockProps) => {
 };
 
 export default function Application() {
+  const actionData = useActionData<typeof action>();
   const [contractor, setContractor] = useState<Contractor | undefined>({
     id: "",
     name: "",
@@ -337,17 +396,19 @@ export default function Application() {
       <div className="flex w-full flex-col items-center justify-center">
         <h1>{content.heading}</h1>
         <div className="flex w-2/3">
-          {/* <Form method="post" action="/submit"> */}
-          <Form>
+          <Form method="post">
             <ContractorBlock
+              actionData={actionData}
               contractor={contractor}
               setContractor={setContractor}
             />
-            <ServiceBlock
+            {/* <ServiceBlock
+              actionData={actionData}
               contractor={contractor}
               setContractor={setContractor}
-            />
+            /> */}
             <SubmitBlock
+              actionData={actionData}
               contractor={contractor}
               setContractor={setContractor}
             />
@@ -356,4 +417,65 @@ export default function Application() {
       </div>
     </main>
   );
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+
+  // TODO: Use map, value for friendly message
+  const fields: string[] = [
+    "name",
+    "email",
+    // "phone",
+    // "website",
+    // "addressLine1",
+    // "city",
+    // "state",
+    // "zip",
+  ];
+  const email = String(formData.get("email"));
+  const website = String(formData.get("website"));
+
+  const errors: any = {};
+
+  function isEmpty(val: string) {
+    return val.trim().length == 0;
+  }
+
+  function isValidEmail(email: string) {
+    const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function isValidURL(website: string) {
+    let url;
+    try {
+      url = new URL(website);
+    } catch (_) {
+      return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:";
+  }
+
+  for (let i = 0; i < fields.length; i++) {
+    const field = fields[i];
+    const value = String(formData.get(field));
+    if (isEmpty(value)) {
+      errors[field] = `Please provide the ${field}.`;
+    }
+  }
+
+  if (!isEmpty(email) && !isValidEmail(email)) {
+    errors.email = "Please provide the valid email.";
+  }
+
+  if (!isEmpty(website) && !isValidURL(website)) {
+    errors.website = "Please provide the valid website.";
+  }
+
+  if (Object.keys(errors).length > 0) {
+    return { errors };
+  }
+  // TODO: Fix this
+  return redirect("/");
 }
