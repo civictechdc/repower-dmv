@@ -58,6 +58,11 @@ module.exports = {
       files: ["**/*.{ts,tsx}"],
       plugins: ["@typescript-eslint", "import"],
       parser: "@typescript-eslint/parser",
+      parserOptions: {
+        project: ["./tsconfig.json"],
+        // eslint-disable-next-line no-undef
+        tsconfigRootDir: __dirname,
+      },
       settings: {
         "import/internal-regex": "^~/",
         "import/resolver": {
@@ -88,13 +93,6 @@ module.exports = {
       },
     },
 
-    // Markdown
-    {
-      files: ["**/*.md"],
-      plugins: ["markdown"],
-      extends: ["plugin:markdown/recommended-legacy", "prettier"],
-    },
-
     // Jest/Vitest
     {
       files: ["**/*.test.{js,jsx,ts,tsx}"],
@@ -120,8 +118,12 @@ module.exports = {
 
     // Cypress
     {
-      files: ["cypress/**/*.ts"],
-      plugins: ["cypress"],
+      files: ["cypress/**/*.ts", "cypress.config.ts"],
+      plugins: ["cypress", "@typescript-eslint"],
+      parser: "@typescript-eslint/parser",
+      parserOptions: {
+        project: null, // Disable TypeScript project checking for Cypress files
+      },
       extends: ["plugin:cypress/recommended", "prettier"],
     },
 
