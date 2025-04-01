@@ -1,15 +1,12 @@
-import { PropsWithChildren } from 'react'
+interface HeadingProps {
+  children: string;
+}
 
-/* eslint-disable */
-// Disabling "no empty interface" rule
-interface HeadingProps { }
-/* eslint-enable */
-
-export default function Heading(props: PropsWithChildren<HeadingProps>) {      
-
+export default function Heading({ children }: HeadingProps) {
   return (
     <h1 className="text-center text-4xl font-extrabold tracking-tight text-gray-900">
-        { props.children }
+      {children}
     </h1>
   );
 }
+
