@@ -2,6 +2,7 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
+import Heading from "~/components/heading";
 import { getContractorById } from "~/models/contractor.server";
 
 import {
@@ -32,6 +33,7 @@ export default function ContractorDetails() {
   const contractor = useLoaderData<typeof loader>() as Contractor;
   return (
     <div>
+      <Heading>{contractor.name}</Heading>
       <Link to="/contractors" className="mb-4"><div className="inline-block mb-4 p-2 bg-gray-300 rounded-lg hover:shadow-md">Back to Contractor List</div></Link>
       <div className="relative w-full max-w-3xl items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
         <h2 className="inline-block p-2 text-xl font-bold">{contractor.name}</h2>

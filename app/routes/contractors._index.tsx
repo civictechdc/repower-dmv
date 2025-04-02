@@ -168,7 +168,7 @@ export default function ContractorList() {
 
   return (
     <div>
-      <Heading title="Contractor List" />
+      <Heading>Contractor List</Heading>
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>
         <Select<Option<string>>

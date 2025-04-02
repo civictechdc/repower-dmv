@@ -7,7 +7,7 @@ export const meta: MetaFunction = () => [{ title: "About" }];
 export default function Index() {
   return (
     <div>
-      <Heading title="About" />
+      <Heading>About</Heading>
     </div>
   );
 }
