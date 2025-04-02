@@ -71,6 +71,37 @@ export function useUser(): User {
   return maybeUser;
 }
 
+export function isEmpty(val: string): boolean {
+  return val.trim().length == 0;
+}
+
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
+}
+
+export function validateURL(website: string): boolean {
+  let url;
+  try {
+    url = new URL(website);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === "http:" || url.protocol === "https:";
+}
+
+export function formatPhoneNumber(value: string): string {
+  const phoneNumber = value.replace(/\D/g, "");
+  let formattedPhoneNumber = "";
+  if (phoneNumber.length <= 3) {
+    formattedPhoneNumber = phoneNumber;
+  } else if (phoneNumber.length <= 6) {
+    formattedPhoneNumber = `(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3, 6)}`;
+  } else {
+    formattedPhoneNumber = `(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  }
+  return formattedPhoneNumber;
+};
+
+export function formatZipCode(value: string): string {
+  return value.replace(/\D/g, "");
 }

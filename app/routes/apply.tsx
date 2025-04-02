@@ -6,6 +6,13 @@ import { SERVICES, STATES, Contractor, Service } from "../types";
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { data, redirect } from "@remix-run/node";
+import {
+  formatPhoneNumber,
+  validateEmail,
+  isEmpty,
+  validateURL,
+  formatZipCode,
+} from "../utils";
 
 export const meta: MetaFunction = () => [
   { title: "Apply as a Contractor | re:Power DMV" },
@@ -22,10 +29,72 @@ const handleContractorOnChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 ) => {
   const { setContractor } = props;
+
+  const name = e.target.name;
+  let value = e.target.value;
+  if (name == "phone") {
+    value = formatPhoneNumber(value);
+  } else if (name == "zip") {
+    value = formatZipCode(value);
+  }
+
   setContractor((prevData: Contractor) => ({
     ...prevData,
-    [e.target.name]: e.target.value,
+    [name]: value,
   }));
+};
+
+const handleStatesServedOnChange = (
+  props: ContractorBlockProps,
+  e: React.ChangeEvent<HTMLInputElement>,
+) => {
+  const { contractor, setContractor } = props;
+  let statesServed = contractor?.statesServed || [];
+  let exists =
+    statesServed.find((filter) => filter.name === e.target.value) || false;
+
+  if (exists) {
+    const updatedStatesServed = statesServed.filter(
+      (filter) => filter.name !== e.target.value,
+    );
+    setContractor((prevData: Contractor) => ({
+      ...prevData,
+      statesServed: updatedStatesServed,
+    }));
+  } else {
+    setContractor((prevData: Contractor) => ({
+      ...prevData,
+      statesServed: [
+        ...(prevData?.statesServed || []),
+        { name: e.target.value },
+      ],
+    }));
+  }
+};
+
+const handleServiceOnChange = (
+  props: ContractorBlockProps,
+  e: React.ChangeEvent<HTMLInputElement>,
+) => {
+  const { contractor, setContractor } = props;
+  let services = contractor?.services || [];
+  let exists =
+    services.find((filter) => filter.name === e.target.value) || false;
+
+  if (exists) {
+    const updatedServices = services.filter(
+      (filter) => filter.name !== e.target.value,
+    );
+    setContractor((prevData: Contractor) => ({
+      ...prevData,
+      services: updatedServices,
+    }));
+  } else {
+    setContractor((prevData: Contractor) => ({
+      ...prevData,
+      services: [...(prevData?.services || []), { name: e.target.value }],
+    }));
+  }
 };
 
 const ContractorBlock = (props: ContractorBlockProps) => {
@@ -89,7 +158,9 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             id="phone"
             name="phone"
             type="text"
+            value={contractor?.phone}
             onChange={(e) => handleContractorOnChange(props, e)}
+            maxLength={13}
           />
           {actionData?.errors?.phone ? (
             <p className={styles["form-input-error"]}>
@@ -175,6 +246,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name="city"
               type="text"
               onChange={(e) => handleContractorOnChange(props, e)}
+              maxLength={45}
             />
             {actionData?.errors?.city ? (
               <p className={styles["form-input-error"]}>
@@ -211,10 +283,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
           </div>
         </div>
         <div>
-          <label
-            htmlFor="zipcode"
-            className={styles["form-input-heading-label"]}
-          >
+          <label htmlFor="zip" className={styles["form-input-heading-label"]}>
             ZIP Code <span className="text-red-500">*</span>
           </label>
           <input
@@ -226,7 +295,9 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             id="zip"
             name="zip"
             type="text"
+            value={contractor?.zip}
             onChange={(e) => handleContractorOnChange(props, e)}
+            maxLength={5}
           />
           {actionData?.errors?.zip ? (
             <p className={styles["form-input-error"]}>
@@ -239,72 +310,22 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   );
 };
 
-const handleStatesServedOnChange = (
-  props: ContractorBlockProps,
-  e: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const { contractor, setContractor } = props;
-  let statesServed = contractor?.statesServed || [];
-  let exists =
-    statesServed.find((filter) => filter.name === e.target.value) || false;
-
-  if (exists) {
-    const updatedStatesServed = statesServed.filter(
-      (filter) => filter.name !== e.target.value,
-    );
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      statesServed: updatedStatesServed,
-    }));
-  } else {
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      statesServed: [
-        ...(prevData?.statesServed || []),
-        { name: e.target.value },
-      ],
-    }));
-  }
-};
-
-const handleServiceOnChange = (
-  props: ContractorBlockProps,
-  e: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const { contractor, setContractor } = props;
-  let services = contractor?.services || [];
-  let exists =
-    services.find((filter) => filter.name === e.target.value) || false;
-
-  if (exists) {
-    const updatedServices = services.filter(
-      (filter) => filter.name !== e.target.value,
-    );
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      services: updatedServices,
-    }));
-  } else {
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      services: [...(prevData?.services || []), { name: e.target.value }],
-    }));
-  }
-};
-
 const ServiceBlock = (props: ContractorBlockProps) => {
-  const { contractor, setContractor } = props;
+  const { actionData, contractor, setContractor } = props;
   return (
     <div>
       <div>
-        <h4>States Served (Check all that apply)</h4>
+        <h4>
+          States Served (Check all that apply){" "}
+          <span className="text-red-500">*</span>
+        </h4>
         <div>
           {STATES.map((item, index) => (
             <div key={index}>
               <input
                 type="checkbox"
-                id={`state_${item.toLowerCase()}`}
-                name={item.toLocaleLowerCase()}
+                id={`state_served_${index}`}
+                name={`state_served_${index}`}
                 className={styles["form-checkbox-input"]}
                 value={item}
                 checked={
@@ -317,17 +338,24 @@ const ServiceBlock = (props: ContractorBlockProps) => {
                 onChange={(e) => handleStatesServedOnChange(props, e)}
               />
               <label
-                htmlFor={`state_${item.toLowerCase()}`}
+                htmlFor={`state_served_${index}`}
                 className={styles["form-checkbox-label"]}
               >
                 {item}
               </label>
             </div>
           ))}
+          {actionData?.errors?.statesServed ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.statesServed}
+            </p>
+          ) : null}
         </div>
       </div>
       <div>
-        <h4>Services offered</h4>
+        <h4>
+          Services offered <span className="text-red-500">*</span>
+        </h4>
         <div>
           {SERVICES.map((item, index) => (
             <div key={index}>
@@ -352,6 +380,11 @@ const ServiceBlock = (props: ContractorBlockProps) => {
               </label>
             </div>
           ))}
+          {actionData?.errors?.services ? (
+            <p className={styles["form-input-error"]}>
+              {actionData?.errors.services}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
@@ -402,11 +435,11 @@ export default function Application() {
               contractor={contractor}
               setContractor={setContractor}
             />
-            {/* <ServiceBlock
+            <ServiceBlock
               actionData={actionData}
               contractor={contractor}
               setContractor={setContractor}
-            /> */}
+            />
             <SubmitBlock
               actionData={actionData}
               contractor={contractor}
@@ -422,55 +455,53 @@ export default function Application() {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
-  // TODO: Use map, value for friendly message
-  const fields: string[] = [
-    "name",
-    "email",
-    // "phone",
-    // "website",
-    // "addressLine1",
-    // "city",
-    // "state",
-    // "zip",
-  ];
+  const fieldDict: { [key: string]: string } = {
+    name: "name",
+    email: "email",
+    phone: "phone number",
+    website: "website",
+    addressLine1: "street address",
+    city: "city",
+    state: "state",
+    zip: "zip code",
+  };
+
   const email = String(formData.get("email"));
   const website = String(formData.get("website"));
 
   const errors: any = {};
 
-  function isEmpty(val: string) {
-    return val.trim().length == 0;
-  }
-
-  function isValidEmail(email: string) {
-    const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  function isValidURL(website: string) {
-    let url;
-    try {
-      url = new URL(website);
-    } catch (_) {
-      return false;
-    }
-    return url.protocol === "http:" || url.protocol === "https:";
-  }
-
-  for (let i = 0; i < fields.length; i++) {
-    const field = fields[i];
-    const value = String(formData.get(field));
+  // Check if required fields have missing values
+  for (const key in fieldDict) {
+    const value = String(formData.get(key));
     if (isEmpty(value)) {
-      errors[field] = `Please provide the ${field}.`;
+      errors[key] = `Please provide the ${fieldDict[key]}.`;
     }
   }
 
-  if (!isEmpty(email) && !isValidEmail(email)) {
+  // Other validations
+  if (!isEmpty(email) && !validateEmail(email)) {
     errors.email = "Please provide the valid email.";
   }
 
-  if (!isEmpty(website) && !isValidURL(website)) {
+  if (!isEmpty(website) && !validateURL(website)) {
     errors.website = "Please provide the valid website.";
+  }
+
+  let statesServed = null;
+  for (let i = 0; i < STATES.length; i++) {
+    statesServed = statesServed || formData.get(`state_served_${i}`);
+  }
+  if (!statesServed) {
+    errors.statesServed = "Please select at least one state.";
+  }
+
+  let services = null;
+  for (let i = 0; i < SERVICES.length; i++) {
+    services = services || formData.get(`service_${i}`);
+  }
+  if (!services) {
+    errors.services = "Please select at least one service.";
   }
 
   if (Object.keys(errors).length > 0) {
