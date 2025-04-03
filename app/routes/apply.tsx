@@ -1,11 +1,10 @@
 import type { MetaFunction } from "@remix-run/node";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState } from "react";
 import content from "../content/apply.json";
-import styles from "../styles/apply.module.css";
 import { SERVICES, STATES, Contractor, Service } from "../types";
 import { Form, useActionData } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { data, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   formatPhoneNumber,
   validateEmail,
@@ -13,10 +12,20 @@ import {
   validateURL,
   formatZipCode,
 } from "../utils";
+import Heading from "~/components/heading";
 
 export const meta: MetaFunction = () => [
   { title: "Apply as a Contractor | re:Power DMV" },
 ];
+
+interface InputBlockProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  placeholder?: string;
+  isMandatory: boolean;
+}
 
 interface ContractorBlockProps {
   actionData: any;
@@ -97,173 +106,151 @@ const handleServiceOnChange = (
   }
 };
 
+const LabelBlock = (props: { label: string; isMandatory: boolean }) => {
+  return (
+    <>
+      <label className="block text-sm/6 font-medium text-gray-900">
+        {props.label}{" "}
+        {props.isMandatory ? <span className="text-red-500">*</span> : <></>}
+      </label>
+    </>
+  );
+};
+
+const ErrorMessageBlock = (props: { value: string }) => {
+  return props.value ? (
+    <p className="block text-sm/6 text-red-500">{props.value}</p>
+  ) : (
+    <></>
+  );
+};
+
+const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
+  const { actionData, contractor } = props;
+  const key: any = props["name"];
+  return (
+    <>
+      <LabelBlock label={props.label} isMandatory={props.isMandatory} />
+      <input
+        className={
+          actionData?.errors[key]
+            ? "w-full border border-red-500 px-3 py-1.5 text-gray-900"
+            : "w-full border px-3 py-1.5 text-gray-900"
+        }
+        id={props["id"]}
+        name={props["name"]}
+        value={props["value"]}
+        placeholder={props["placeholder"] || ""}
+        type="text"
+        onChange={(e) => handleContractorOnChange(props, e)}
+      />
+      <ErrorMessageBlock value={actionData?.errors[key]} />
+    </>
+  );
+};
+
 const ContractorBlock = (props: ContractorBlockProps) => {
   const { actionData, contractor, setContractor } = props;
   return (
     <div>
       <div>
-        <h3>Contact Information</h3>
-        <div>
-          <label htmlFor="name" className={styles["form-input-heading-label"]}>
-            Company Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.name
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="name"
-            name="name"
-            type="text"
-            onChange={(e) => handleContractorOnChange(props, e)}
+        <p className="pb-3 text-xl font-semibold">
+          Company & Contact Information
+        </p>
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "name",
+              name: "name",
+              label: "Company Name",
+              value: contractor?.name || "",
+              isMandatory: true,
+              ...props,
+            }}
           />
-          {actionData?.errors?.name ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.name}
-            </p>
-          ) : null}
         </div>
-        <div>
-          <label htmlFor="email" className={styles["form-input-heading-label"]}>
-            Contact Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.email
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="email"
-            name="email"
-            type="text"
-            onChange={(e) => handleContractorOnChange(props, e)}
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "email",
+              name: "email",
+              label: "Contact Email",
+              value: contractor?.email || "",
+              isMandatory: true,
+              ...props,
+            }}
           />
-          {actionData?.errors?.email ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.email}
-            </p>
-          ) : null}
         </div>
-        <div>
-          <label htmlFor="phone" className={styles["form-input-heading-label"]}>
-            Contact Phone <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.phone
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="phone"
-            name="phone"
-            type="text"
-            value={contractor?.phone}
-            onChange={(e) => handleContractorOnChange(props, e)}
-            maxLength={13}
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "phone",
+              name: "phone",
+              label: "Contact Phone",
+              value: contractor?.phone || "",
+              isMandatory: true,
+              ...props,
+            }}
           />
-          {actionData?.errors?.phone ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.phone}
-            </p>
-          ) : null}
         </div>
-        <div>
-          <label
-            htmlFor="website"
-            className={styles["form-input-heading-label"]}
-          >
-            Company Website <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.website
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="website"
-            name="website"
-            placeholder="https://"
-            type="text"
-            onChange={(e) => handleContractorOnChange(props, e)}
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "website",
+              name: "website",
+              label: "Website",
+              value: contractor?.website || "",
+              placeholder: "https://",
+              isMandatory: true,
+              ...props,
+            }}
           />
-          {actionData?.errors?.website ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.website}
-            </p>
-          ) : null}
         </div>
       </div>
       <div>
-        <h3>Company Address</h3>
-        <div>
-          <label htmlFor="line1" className={styles["form-input-heading-label"]}>
-            Street Address <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.addressLine1
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="line1"
-            name="addressLine1"
-            type="text"
-            onChange={(e) => handleContractorOnChange(props, e)}
-          />
-          {actionData?.errors?.addressLine1 ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.addressLine1}
-            </p>
-          ) : null}
-        </div>
-        <div>
-          <label htmlFor="line2" className={styles["form-input-heading-label"]}>
-            Address Line 2
-          </label>
-          <input
-            id="line2"
-            name="addressLine2"
-            type="text"
-            onChange={(e) => handleContractorOnChange(props, e)}
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "addressLine1",
+              name: "addressLine1",
+              label: "Street Address",
+              value: contractor?.addressLine1 || "",
+              isMandatory: true,
+              ...props,
+            }}
           />
         </div>
-        <div className="flex w-full flex-row">
-          <div className="w-1/2">
-            <label
-              htmlFor="city"
-              className={styles["form-input-description-label"]}
-            >
-              City <span className="text-red-500">*</span>
-            </label>
-            <input
-              className={
-                actionData?.errors?.city
-                  ? styles["form-input-invalid"]
-                  : styles["form-input"]
-              }
-              id="city"
-              name="city"
-              type="text"
-              onChange={(e) => handleContractorOnChange(props, e)}
-              maxLength={45}
+        <div className="pb-3">
+          <InputBlock
+            {...{
+              id: "addressLine2",
+              name: "addressLine2",
+              label: "Address Line 2",
+              value: contractor?.addressLine2 || "",
+              isMandatory: false,
+              ...props,
+            }}
+          />
+        </div>
+        <div className="flex w-full flex-row pb-3">
+          <div className="w-1/2 pr-10">
+            <InputBlock
+              {...{
+                id: "city",
+                name: "city",
+                label: "City",
+                value: contractor?.city || "",
+                isMandatory: true,
+                ...props,
+              }}
             />
-            {actionData?.errors?.city ? (
-              <p className={styles["form-input-error"]}>
-                {actionData?.errors.city}
-              </p>
-            ) : null}
           </div>
           <div className="flex w-1/2 flex-col">
-            <label
-              htmlFor="stateSelect"
-              className={styles["form-input-description-label"]}
-            >
-              State <span className="text-red-500">*</span>
-            </label>
+            <LabelBlock label="State" isMandatory={true} />
             <select
               id="stateSelect"
               name="state"
+              className="px-3 py-1.5"
               onChange={(e) => handleContractorOnChange(props, e)}
             >
               {["", ...STATES].map((item, index) => (
@@ -275,35 +262,20 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 </option>
               ))}
             </select>
-            {actionData?.errors?.state ? (
-              <p className={styles["form-input-error"]}>
-                {actionData?.errors.state}
-              </p>
-            ) : null}
+            <ErrorMessageBlock value={actionData?.errors?.state} />
           </div>
         </div>
-        <div>
-          <label htmlFor="zip" className={styles["form-input-heading-label"]}>
-            ZIP Code <span className="text-red-500">*</span>
-          </label>
-          <input
-            className={
-              actionData?.errors?.zip
-                ? styles["form-input-invalid"]
-                : styles["form-input"]
-            }
-            id="zip"
-            name="zip"
-            type="text"
-            value={contractor?.zip}
-            onChange={(e) => handleContractorOnChange(props, e)}
-            maxLength={5}
+        <div className="w-1/2 pb-3 pr-10">
+          <InputBlock
+            {...{
+              id: "zip",
+              name: "zip",
+              label: "Zip Code",
+              value: contractor?.zip || "",
+              isMandatory: true,
+              ...props,
+            }}
           />
-          {actionData?.errors?.zip ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.zip}
-            </p>
-          ) : null}
         </div>
       </div>
     </div>
@@ -314,11 +286,11 @@ const ServiceBlock = (props: ContractorBlockProps) => {
   const { actionData, contractor, setContractor } = props;
   return (
     <div>
-      <div>
-        <h4>
+      <div className="pb-3">
+        <p className="pb-3 text-xl font-semibold">
           States Served (Check all that apply){" "}
           <span className="text-red-500">*</span>
-        </h4>
+        </p>
         <div>
           {STATES.map((item, index) => (
             <div key={index}>
@@ -326,7 +298,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
                 type="checkbox"
                 id={`state_served_${index}`}
                 name={`state_served_${index}`}
-                className={styles["form-checkbox-input"]}
+                className="col-start-1 row-start-1"
                 value={item}
                 checked={
                   contractor?.statesServed.find(
@@ -339,23 +311,19 @@ const ServiceBlock = (props: ContractorBlockProps) => {
               />
               <label
                 htmlFor={`state_served_${index}`}
-                className={styles["form-checkbox-label"]}
+                className="font-medium text-gray-900"
               >
                 {item}
               </label>
             </div>
           ))}
-          {actionData?.errors?.statesServed ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.statesServed}
-            </p>
-          ) : null}
+          <ErrorMessageBlock value={actionData?.errors?.statesServed} />
         </div>
       </div>
-      <div>
-        <h4>
+      <div className="pb-10">
+        <p className="pb-3 text-xl font-semibold">
           Services offered <span className="text-red-500">*</span>
-        </h4>
+        </p>
         <div>
           {SERVICES.map((item, index) => (
             <div key={index}>
@@ -363,7 +331,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
                 type="checkbox"
                 id={`service_${index}`}
                 name={`service_${index}`}
-                className={styles["form-checkbox-input"]}
+                className="col-start-1 row-start-1"
                 value={item}
                 checked={
                   contractor?.services.find((service) => service.name === item)
@@ -374,17 +342,13 @@ const ServiceBlock = (props: ContractorBlockProps) => {
               />
               <label
                 htmlFor={`service_${index}`}
-                className={styles["form-checkbox-label"]}
+                className="font-medium text-gray-900"
               >
                 {item}
               </label>
             </div>
           ))}
-          {actionData?.errors?.services ? (
-            <p className={styles["form-input-error"]}>
-              {actionData?.errors.services}
-            </p>
-          ) : null}
+          <ErrorMessageBlock value={actionData?.errors?.services} />
         </div>
       </div>
     </div>
@@ -397,7 +361,7 @@ const SubmitBlock = (props: ContractorBlockProps) => {
     <div>
       <button
         type="submit"
-        className={styles["form-submit-button"]}
+        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
         // onClick={(e) => handleSubmit(e)}
       >
         Submit
@@ -426,10 +390,10 @@ export default function Application() {
 
   return (
     <main className="min-h screen relative">
+      <Heading>{content.heading}</Heading>
       <div className="flex w-full flex-col items-center justify-center">
-        <h1>{content.heading}</h1>
-        <div className="flex w-2/3">
-          <Form method="post">
+        <div className="flex w-1/2 items-center justify-center">
+          <Form method="post" className="flex w-full flex-col p-5">
             <ContractorBlock
               actionData={actionData}
               contractor={contractor}
