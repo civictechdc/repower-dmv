@@ -354,7 +354,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
 
 const SubmitBlock = () => {
   return (
-    <div className="py-5">
+    <div className="py-10">
       <button
         type="submit"
         className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600 focus:bg-blue-400"
