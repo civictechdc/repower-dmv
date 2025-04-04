@@ -26,6 +26,7 @@ interface InputBlockProps {
   label: string;
   value: string;
   placeholder?: string;
+  maxLength?: number;
   required: boolean;
 }
 
@@ -128,6 +129,7 @@ const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
         value={props["value"]}
         placeholder={props["placeholder"] || ""}
         type="text"
+        maxLength={props["maxLength"]}
         onChange={(e) => handleContractorOnChange(props, e)}
       />
       <ErrorMessageBlock value={actionData?.errors[key]} />
@@ -202,6 +204,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               label: "Contact Phone",
               value: contractor?.phone || "",
               required: true,
+              maxLength: 13,
               ...props,
             }}
           />
@@ -254,6 +257,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 label: "City",
                 value: contractor?.city || "",
                 required: true,
+                maxLength: 49,
                 ...props,
               }}
             />
@@ -290,6 +294,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               label: "Zip Code",
               value: contractor?.zip || "",
               required: true,
+              maxLength: 5,
               ...props,
             }}
           />
@@ -357,7 +362,7 @@ const SubmitBlock = () => {
     <div className="py-10">
       <button
         type="submit"
-        className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600 focus:bg-blue-400"
+        className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600"
       >
         SUBMIT
       </button>
