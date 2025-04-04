@@ -1,10 +1,9 @@
-import type { MetaFunction } from "@remix-run/node";
-import React, { useState } from "react";
-import content from "../content/apply.json";
-import { SERVICES, STATES, Contractor, Service } from "../types";
+import { MetaFunction, ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import React, { useState, Dispatch, SetStateAction } from "react";
+
+import content from "../content/apply.json";
+import { SERVICES, STATES, Contractor, Service, State } from "../types";
 import {
   formatPhoneNumber,
   validateEmail,
@@ -18,7 +17,7 @@ export const meta: MetaFunction = () => [
 ];
 
 // TODO: Change this to different one
-const REDIRECT_URL: string = "/";
+const REDIRECT_URL = "/";
 
 interface InputBlockProps {
   id: string;
@@ -33,15 +32,15 @@ interface InputBlockProps {
 interface CheckboxBlockProps {
   id: string;
   name: string;
-  value: any;
-  selectedValues: any[];
+  value: string;
+  selectedValues: State[] | Service[];
   field: string;
 }
 
 interface ContractorBlockProps {
   actionData: any;
   contractor?: Contractor;
-  setContractor: any;
+  setContractor: Dispatch<SetStateAction<Contractor>>;
 }
 
 const handleContractorOnChange = (
@@ -49,7 +48,6 @@ const handleContractorOnChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 ) => {
   const { setContractor } = props;
-
   const name = e.target.name;
   let value = e.target.value;
   if (name == "phone") {
@@ -71,7 +69,7 @@ const handleCheckboxOnChange = (
   const { setContractor } = props;
   const selectedValues = props.selectedValues;
 
-  let exists =
+  const exists =
     selectedValues.find((filter) => filter.name === e.target.value) || false;
 
   if (exists) {
@@ -114,7 +112,7 @@ const ErrorMessageBlock = (props: { value: string }) => {
 
 const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
   const { actionData } = props;
-  const key: any = props["name"];
+  const key: string = props["name"];
   return (
     <>
       <LabelBlock label={props.label} required={props.required} />
@@ -139,7 +137,7 @@ const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
 
 const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
   const { contractor } = props;
-  const values: any = contractor
+  const values: State[] | Service[] = contractor
     ? contractor[props.field as keyof Contractor]
     : [];
   return (
@@ -274,7 +272,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               }
               onChange={(e) => handleContractorOnChange(props, e)}
             >
-              {["", ...STATES].map((item, index) => (
+              {["", ...STATES].map((item) => (
                 <option
                   key={`state_${item.toLowerCase()}`}
                   value={item.toUpperCase()}
@@ -357,12 +355,15 @@ const ServiceBlock = (props: ContractorBlockProps) => {
   );
 };
 
-const SubmitBlock = () => {
+const SubmitBlock = (props: ContractorBlockProps) => {
   return (
     <div className="py-10">
       <button
         type="submit"
         className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600"
+        onClick={() => {
+          console.log(props.contractor);
+        }}
       >
         SUBMIT
       </button>
@@ -372,7 +373,7 @@ const SubmitBlock = () => {
 
 export default function Application() {
   const actionData = useActionData<typeof action>();
-  const [contractor, setContractor] = useState<Contractor | undefined>({
+  const [contractor, setContractor] = useState<Contractor>({
     id: "",
     name: "",
     email: "",
@@ -407,7 +408,11 @@ export default function Application() {
               contractor={contractor}
               setContractor={setContractor}
             />
-            <SubmitBlock />
+            <SubmitBlock
+              actionData={actionData}
+              contractor={contractor}
+              setContractor={setContractor}
+            />
           </Form>
         </div>
       </div>
@@ -418,7 +423,7 @@ export default function Application() {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
-  const fieldDict: { [key: string]: string } = {
+  const fieldDict: Record<string, string> = {
     name: "name",
     email: "email",
     phone: "phone number",
@@ -432,7 +437,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const email = String(formData.get("email"));
   const website = String(formData.get("website"));
 
-  const errors: any = {};
+  const errors: Record<string, string> = {};
 
   // Check if required fields have missing values
   for (const key in fieldDict) {
