@@ -137,7 +137,8 @@ const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
 
 const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
   const { contractor } = props;
-  const values: State[] | Service[] = contractor
+
+  const values: any = contractor
     ? contractor[props.field as keyof Contractor]
     : [];
   return (
@@ -149,7 +150,7 @@ const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
         className="mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 border-blue-600 bg-white checked:border-0 checked:bg-blue-800"
         value={props["value"]}
         checked={
-          values.find((value: any) => value.name === props["value"])
+          values.find((value: State | Service) => value.name === props["value"])
             ? true
             : false
         }
@@ -309,7 +310,8 @@ const ServiceBlock = (props: ContractorBlockProps) => {
       <p className="text-2xl font-semibold">Services</p>
       <div className="py-3">
         <p className="text-lg font-medium">
-          States Served <span className="text-red-500">*</span>
+          States Served (check all that apply):{" "}
+          <span className="text-red-500">*</span>
         </p>
         <div className="pt-3">
           {STATES.map((item, index) => (
@@ -329,9 +331,10 @@ const ServiceBlock = (props: ContractorBlockProps) => {
           <ErrorMessageBlock value={actionData?.errors?.statesServed} />
         </div>
       </div>
-      <div>
+      <div className="py-3">
         <p className="text-lg font-medium">
-          Services offered <span className="text-red-500">*</span>
+          Services offered (check all that apply):{" "}
+          <span className="text-red-500">*</span>
         </p>
         <div className="pt-3">
           {SERVICES.map((item, index) => (
