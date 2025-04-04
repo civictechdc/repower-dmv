@@ -163,7 +163,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   return (
     <div>
       <div>
-        <p className="pb-3 text-xl font-semibold">
+        <p className="pb-3 text-2xl font-semibold">
           Company & Contact Information
         </p>
         <div className="pb-3">
@@ -259,7 +259,11 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             <select
               id="stateSelect"
               name="state"
-              className="px-3 py-1.5"
+              className={
+                actionData?.errors["state"]
+                  ? "border border-red-500 px-3 py-1.5"
+                  : "px-3 py-1.5"
+              }
               onChange={(e) => handleContractorOnChange(props, e)}
             >
               {["", ...STATES].map((item, index) => (
@@ -295,11 +299,12 @@ const ServiceBlock = (props: ContractorBlockProps) => {
   const { actionData, contractor, setContractor } = props;
   return (
     <div>
-      <div className="pb-3">
-        <p className="pb-3 text-xl font-semibold">
+      <p className="text-2xl font-semibold">Services</p>
+      <div className="py-3">
+        <p className="text-lg font-medium">
           States Served <span className="text-red-500">*</span>
         </p>
-        <div>
+        <div className="pt-3">
           {STATES.map((item, index) => (
             <div key={index}>
               <CheckboxBlock
@@ -317,11 +322,11 @@ const ServiceBlock = (props: ContractorBlockProps) => {
           <ErrorMessageBlock value={actionData?.errors?.statesServed} />
         </div>
       </div>
-      <div className="pb-10">
-        <p className="pb-3 text-xl font-semibold">
+      <div>
+        <p className="text-lg font-medium">
           Services offered <span className="text-red-500">*</span>
         </p>
-        <div>
+        <div className="pt-3">
           {SERVICES.map((item, index) => (
             <div key={index}>
               <CheckboxBlock
@@ -346,16 +351,12 @@ const ServiceBlock = (props: ContractorBlockProps) => {
 const SubmitBlock = (props: ContractorBlockProps) => {
   const { contractor } = props;
   return (
-    <div>
+    <div className="py-5">
       <button
         type="submit"
-        className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
-        onClick={(e) => {
-          // TODO: Remove this
-          console.log(props.contractor);
-        }}
+        className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600 focus:bg-blue-400"
       >
-        Submit
+        SUBMIT
       </button>
     </div>
   );
@@ -381,15 +382,18 @@ export default function Application() {
 
   return (
     <main className="min-h screen relative">
-      <Heading>{content.heading}</Heading>
       <div className="flex w-full flex-col items-center justify-center">
-        <div className="flex w-1/2 items-center justify-center">
+        <div className="flex w-1/2 flex-col items-center justify-center">
+          <div className="flex w-full px-5 py-2 text-4xl font-bold">
+            {content.heading}
+          </div>
           <Form method="post" className="flex w-full flex-col p-5">
             <ContractorBlock
               actionData={actionData}
               contractor={contractor}
               setContractor={setContractor}
             />
+            <hr className="my-5 border-2 border-gray-300" />
             <ServiceBlock
               actionData={actionData}
               contractor={contractor}
