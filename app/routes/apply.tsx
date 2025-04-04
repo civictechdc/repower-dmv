@@ -24,7 +24,15 @@ interface InputBlockProps {
   label: string;
   value: string;
   placeholder?: string;
-  isMandatory: boolean;
+  required: boolean;
+}
+
+interface CheckboxBlockProps {
+  id: string;
+  name: string;
+  value: any;
+  selectedValues: any[];
+  field: string;
 }
 
 interface ContractorBlockProps {
@@ -53,65 +61,39 @@ const handleContractorOnChange = (
   }));
 };
 
-const handleStatesServedOnChange = (
-  props: ContractorBlockProps,
+const handleCheckboxOnChange = (
+  props: CheckboxBlockProps & ContractorBlockProps,
   e: React.ChangeEvent<HTMLInputElement>,
 ) => {
-  const { contractor, setContractor } = props;
-  let statesServed = contractor?.statesServed || [];
+  const { setContractor } = props;
+  const selectedValues = props.selectedValues;
   let exists =
-    statesServed.find((filter) => filter.name === e.target.value) || false;
-
+    selectedValues.find((filter) => filter.name === e.target.value) || false;
   if (exists) {
-    const updatedStatesServed = statesServed.filter(
+    const updatedSelectedValues = selectedValues.filter(
       (filter) => filter.name !== e.target.value,
     );
     setContractor((prevData: Contractor) => ({
       ...prevData,
-      statesServed: updatedStatesServed,
+      [props.field]: updatedSelectedValues,
     }));
   } else {
     setContractor((prevData: Contractor) => ({
       ...prevData,
-      statesServed: [
-        ...(prevData?.statesServed || []),
+      [props.field]: [
+        ...(prevData ? prevData[props.field as keyof Contractor] : []),
         { name: e.target.value },
       ],
     }));
   }
 };
 
-const handleServiceOnChange = (
-  props: ContractorBlockProps,
-  e: React.ChangeEvent<HTMLInputElement>,
-) => {
-  const { contractor, setContractor } = props;
-  let services = contractor?.services || [];
-  let exists =
-    services.find((filter) => filter.name === e.target.value) || false;
-
-  if (exists) {
-    const updatedServices = services.filter(
-      (filter) => filter.name !== e.target.value,
-    );
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      services: updatedServices,
-    }));
-  } else {
-    setContractor((prevData: Contractor) => ({
-      ...prevData,
-      services: [...(prevData?.services || []), { name: e.target.value }],
-    }));
-  }
-};
-
-const LabelBlock = (props: { label: string; isMandatory: boolean }) => {
+const LabelBlock = (props: { label: string; required: boolean }) => {
   return (
     <>
       <label className="block text-sm/6 font-medium text-gray-900">
         {props.label}{" "}
-        {props.isMandatory ? <span className="text-red-500">*</span> : <></>}
+        {props.required ? <span className="text-red-500">*</span> : <></>}
       </label>
     </>
   );
@@ -126,11 +108,11 @@ const ErrorMessageBlock = (props: { value: string }) => {
 };
 
 const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
-  const { actionData, contractor } = props;
+  const { actionData } = props;
   const key: any = props["name"];
   return (
     <>
-      <LabelBlock label={props.label} isMandatory={props.isMandatory} />
+      <LabelBlock label={props.label} required={props.required} />
       <input
         className={
           actionData?.errors[key]
@@ -149,6 +131,33 @@ const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
   );
 };
 
+const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
+  const { contractor } = props;
+  const values: any = contractor
+    ? contractor[props.field as keyof Contractor]
+    : [];
+  return (
+    <div className="my-1 flex">
+      <input
+        type="checkbox"
+        id={props["id"]}
+        name={props["name"]}
+        className="mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 border-blue-600 bg-white checked:border-0 checked:bg-blue-800"
+        value={props["value"]}
+        checked={
+          values.find((value: any) => value.name === props["value"])
+            ? true
+            : false
+        }
+        onChange={(e) => handleCheckboxOnChange(props, e)}
+      />
+      <label htmlFor={props["name"]} className="pl-3 font-medium text-gray-900">
+        {props["value"]}
+      </label>
+    </div>
+  );
+};
+
 const ContractorBlock = (props: ContractorBlockProps) => {
   const { actionData, contractor, setContractor } = props;
   return (
@@ -164,7 +173,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "name",
               label: "Company Name",
               value: contractor?.name || "",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -176,7 +185,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "email",
               label: "Contact Email",
               value: contractor?.email || "",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -188,7 +197,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "phone",
               label: "Contact Phone",
               value: contractor?.phone || "",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -201,7 +210,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               label: "Website",
               value: contractor?.website || "",
               placeholder: "https://",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -215,7 +224,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "addressLine1",
               label: "Street Address",
               value: contractor?.addressLine1 || "",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -227,7 +236,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "addressLine2",
               label: "Address Line 2",
               value: contractor?.addressLine2 || "",
-              isMandatory: false,
+              required: false,
               ...props,
             }}
           />
@@ -240,13 +249,13 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 name: "city",
                 label: "City",
                 value: contractor?.city || "",
-                isMandatory: true,
+                required: true,
                 ...props,
               }}
             />
           </div>
           <div className="flex w-1/2 flex-col">
-            <LabelBlock label="State" isMandatory={true} />
+            <LabelBlock label="State" required={true} />
             <select
               id="stateSelect"
               name="state"
@@ -272,7 +281,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               name: "zip",
               label: "Zip Code",
               value: contractor?.zip || "",
-              isMandatory: true,
+              required: true,
               ...props,
             }}
           />
@@ -288,33 +297,21 @@ const ServiceBlock = (props: ContractorBlockProps) => {
     <div>
       <div className="pb-3">
         <p className="pb-3 text-xl font-semibold">
-          States Served (Check all that apply){" "}
-          <span className="text-red-500">*</span>
+          States Served <span className="text-red-500">*</span>
         </p>
         <div>
           {STATES.map((item, index) => (
             <div key={index}>
-              <input
-                type="checkbox"
-                id={`state_served_${index}`}
-                name={`state_served_${index}`}
-                className="col-start-1 row-start-1"
-                value={item}
-                checked={
-                  contractor?.statesServed.find(
-                    (stateServed) => stateServed.name === item,
-                  )
-                    ? true
-                    : false
-                }
-                onChange={(e) => handleStatesServedOnChange(props, e)}
+              <CheckboxBlock
+                {...{
+                  id: `state_served_${index}`,
+                  name: `state_served_${index}`,
+                  value: item,
+                  selectedValues: contractor?.statesServed || [],
+                  field: "statesServed",
+                  ...props,
+                }}
               />
-              <label
-                htmlFor={`state_served_${index}`}
-                className="font-medium text-gray-900"
-              >
-                {item}
-              </label>
             </div>
           ))}
           <ErrorMessageBlock value={actionData?.errors?.statesServed} />
@@ -327,25 +324,16 @@ const ServiceBlock = (props: ContractorBlockProps) => {
         <div>
           {SERVICES.map((item, index) => (
             <div key={index}>
-              <input
-                type="checkbox"
-                id={`service_${index}`}
-                name={`service_${index}`}
-                className="col-start-1 row-start-1"
-                value={item}
-                checked={
-                  contractor?.services.find((service) => service.name === item)
-                    ? true
-                    : false
-                }
-                onChange={(e) => handleServiceOnChange(props, e)}
+              <CheckboxBlock
+                {...{
+                  id: `service_${index}`,
+                  name: `service_${index}`,
+                  value: item,
+                  selectedValues: contractor?.services || [],
+                  field: "services",
+                  ...props,
+                }}
               />
-              <label
-                htmlFor={`service_${index}`}
-                className="font-medium text-gray-900"
-              >
-                {item}
-              </label>
             </div>
           ))}
           <ErrorMessageBlock value={actionData?.errors?.services} />
@@ -362,7 +350,10 @@ const SubmitBlock = (props: ContractorBlockProps) => {
       <button
         type="submit"
         className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-400"
-        // onClick={(e) => handleSubmit(e)}
+        onClick={(e) => {
+          // TODO: Remove this
+          console.log(props.contractor);
+        }}
       >
         Submit
       </button>
