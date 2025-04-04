@@ -12,11 +12,13 @@ import {
   validateURL,
   formatZipCode,
 } from "../utils";
-import Heading from "~/components/heading";
 
 export const meta: MetaFunction = () => [
   { title: "Apply as a Contractor | re:Power DMV" },
 ];
+
+// TODO: Change this to different one
+const REDIRECT_URL: string = "/";
 
 interface InputBlockProps {
   id: string;
@@ -67,8 +69,10 @@ const handleCheckboxOnChange = (
 ) => {
   const { setContractor } = props;
   const selectedValues = props.selectedValues;
+
   let exists =
     selectedValues.find((filter) => filter.name === e.target.value) || false;
+
   if (exists) {
     const updatedSelectedValues = selectedValues.filter(
       (filter) => filter.name !== e.target.value,
@@ -159,7 +163,7 @@ const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
 };
 
 const ContractorBlock = (props: ContractorBlockProps) => {
-  const { actionData, contractor, setContractor } = props;
+  const { actionData, contractor } = props;
   return (
     <div>
       <div>
@@ -296,7 +300,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 const ServiceBlock = (props: ContractorBlockProps) => {
-  const { actionData, contractor, setContractor } = props;
+  const { actionData, contractor } = props;
   return (
     <div>
       <p className="text-2xl font-semibold">Services</p>
@@ -348,8 +352,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
   );
 };
 
-const SubmitBlock = (props: ContractorBlockProps) => {
-  const { contractor } = props;
+const SubmitBlock = () => {
   return (
     <div className="py-5">
       <button
@@ -399,11 +402,7 @@ export default function Application() {
               contractor={contractor}
               setContractor={setContractor}
             />
-            <SubmitBlock
-              actionData={actionData}
-              contractor={contractor}
-              setContractor={setContractor}
-            />
+            <SubmitBlock />
           </Form>
         </div>
       </div>
@@ -466,6 +465,6 @@ export async function action({ request }: ActionFunctionArgs) {
   if (Object.keys(errors).length > 0) {
     return { errors };
   }
-  // TODO: Fix this
-  return redirect("/");
+
+  return redirect(REDIRECT_URL);
 }
