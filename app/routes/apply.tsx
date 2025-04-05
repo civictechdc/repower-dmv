@@ -154,7 +154,7 @@ const CheckboxBlock = (props: CheckboxBlockProps) => {
         type="checkbox"
         id={props["id"]}
         name={props["name"]}
-        className="border-repower-dark-blue mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 bg-white checked:border-0 checked:bg-blue-900"
+        className="mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 border-repower-dark-blue bg-white checked:border-0 checked:bg-blue-900"
         value={props["value"]}
         checked={
           values.find(
@@ -402,12 +402,12 @@ const CertificationBlock = (props: ContractorBlockProps) => {
   );
 };
 
-const SubmitBlock = (props: ContractorBlockProps) => {
+const SubmitBlock = () => {
   return (
     <div className="py-10">
       <button
         type="submit"
-        className="bg-repower-dark-blue rounded px-10 py-3 font-semibold text-white hover:bg-blue-900"
+        className="rounded bg-repower-dark-blue px-10 py-3 font-semibold text-white hover:bg-blue-900"
       >
         SUBMIT
       </button>
@@ -458,11 +458,7 @@ export default function Application() {
               contractor={contractor}
               setContractor={setContractor}
             />
-            <SubmitBlock
-              errors={actionData?.errors}
-              contractor={contractor}
-              setContractor={setContractor}
-            />
+            <SubmitBlock />
           </Form>
         </div>
       </div>
