@@ -20,7 +20,7 @@ export const meta: MetaFunction = () => [
 const REDIRECT_URL = "/";
 
 interface ContractorBlockProps {
-  actionData: any;
+  errors?: Record<string, string>;
   contractor?: Contractor;
   setContractor: Dispatch<SetStateAction<Contractor>>;
 }
@@ -40,7 +40,7 @@ interface CheckboxBlockProps extends ContractorBlockProps {
   name: string;
   value: string;
   selectedValues: State[] | Service[];
-  field: string;
+  field: "statesServed" | "services" | "certifications";
 }
 const handleContractorOnChange = (
   props: ContractorBlockProps,
@@ -82,7 +82,7 @@ const handleCheckboxOnChange = (
     setContractor((prevData: Contractor) => ({
       ...prevData,
       [props.field]: [
-        ...(prevData ? prevData[props.field as keyof Contractor] : []),
+        ...(prevData ? prevData[props.field] : []),
         { name: e.target.value },
       ],
     }));
@@ -109,14 +109,15 @@ const ErrorMessageBlock = (props: { value: string }) => {
 };
 
 const InputBlock = (props: InputBlockProps) => {
-  const { actionData } = props;
+  const { errors } = props;
   const key: string = props["name"];
+  const errorData = errors || {};
   return (
     <>
       <LabelBlock label={props.label} required={props.required} />
       <input
         className={
-          actionData?.errors[key]
+          errorData[key]
             ? "w-full border border-red-500 px-3 py-1.5 text-gray-900"
             : "w-full border px-3 py-1.5 text-gray-900"
         }
@@ -128,7 +129,7 @@ const InputBlock = (props: InputBlockProps) => {
         maxLength={props["maxLength"]}
         onChange={(e) => handleContractorOnChange(props, e)}
       />
-      <ErrorMessageBlock value={actionData?.errors[key]} />
+      <ErrorMessageBlock value={errorData[key]} />
     </>
   );
 };
@@ -136,16 +137,14 @@ const InputBlock = (props: InputBlockProps) => {
 const CheckboxBlock = (props: CheckboxBlockProps) => {
   const { contractor } = props;
 
-  const values: any = contractor
-    ? contractor[props.field as keyof Contractor]
-    : [];
+  const values: State[] | Service[] = contractor ? contractor[props.field] : [];
   return (
     <div className="my-1 flex">
       <input
         type="checkbox"
         id={props["id"]}
         name={props["name"]}
-        className="mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 border-blue-600 bg-white checked:border-0 checked:bg-blue-800"
+        className="border-repower-dark-blue mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 bg-white checked:border-0 checked:bg-blue-900"
         value={props["value"]}
         checked={
           values.find((value: State | Service) => value.name === props["value"])
@@ -162,7 +161,8 @@ const CheckboxBlock = (props: CheckboxBlockProps) => {
 };
 
 const ContractorBlock = (props: ContractorBlockProps) => {
-  const { actionData, contractor } = props;
+  const { errors, contractor } = props;
+  const errorData = errors || {};
   return (
     <div>
       <div>
@@ -265,7 +265,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               id="stateSelect"
               name="state"
               className={
-                actionData?.errors["state"]
+                errorData["state"]
                   ? "border border-red-500 px-3 py-1.5"
                   : "px-3 py-1.5"
               }
@@ -280,7 +280,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 </option>
               ))}
             </select>
-            <ErrorMessageBlock value={actionData?.errors?.state} />
+            <ErrorMessageBlock value={errorData["state"]} />
           </div>
         </div>
         <div className="w-1/2 pb-3 pr-10">
@@ -302,7 +302,8 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 const ServiceBlock = (props: ContractorBlockProps) => {
-  const { actionData, contractor } = props;
+  const { errors, contractor } = props;
+  const errorData = errors || {};
   return (
     <div>
       <p className="text-2xl font-semibold">Services</p>
@@ -326,7 +327,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
               />
             </div>
           ))}
-          <ErrorMessageBlock value={actionData?.errors?.statesServed} />
+          <ErrorMessageBlock value={errorData["statesServed"]} />
         </div>
       </div>
       <div className="py-3">
@@ -349,7 +350,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
               />
             </div>
           ))}
-          <ErrorMessageBlock value={actionData?.errors?.services} />
+          <ErrorMessageBlock value={errorData["services"]} />
         </div>
       </div>
     </div>
@@ -361,7 +362,7 @@ const SubmitBlock = (props: ContractorBlockProps) => {
     <div className="py-10">
       <button
         type="submit"
-        className="rounded bg-blue-500 px-10 py-3 font-semibold text-white hover:bg-blue-600"
+        className="bg-repower-dark-blue rounded px-10 py-3 font-semibold text-white hover:bg-blue-900"
         onClick={() => {
           console.log(props.contractor);
         }}
@@ -399,18 +400,18 @@ export default function Application() {
           </div>
           <Form method="post" className="flex w-full flex-col p-5">
             <ContractorBlock
-              actionData={actionData}
+              errors={actionData?.errors}
               contractor={contractor}
               setContractor={setContractor}
             />
             <hr className="my-5 border-2 border-gray-300" />
             <ServiceBlock
-              actionData={actionData}
+              errors={actionData?.errors}
               contractor={contractor}
               setContractor={setContractor}
             />
             <SubmitBlock
-              actionData={actionData}
+              errors={actionData?.errors}
               contractor={contractor}
               setContractor={setContractor}
             />
