@@ -9,7 +9,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 py-4 px-6 text-white bg-[#253551] z-50">
+    <nav className="fixed top-0 left-0 right-0 py-4 px-6 text-white bg-repower-dark-blue z-50">
       <div className="flex flex-wrap md:flex-nowrap justify-items-center items-center">
         <NavLink to="/">
             <img src="img/electrifydmvwhitehorizontal.png" alt="Electrify DMV logo" className="inline-block h-fit w-[250px] md:w-[300px] lg:w-[350px] md:mr-10 grow md:grow-0" />
