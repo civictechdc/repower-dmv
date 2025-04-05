@@ -408,10 +408,6 @@ const SubmitBlock = (props: ContractorBlockProps) => {
       <button
         type="submit"
         className="bg-repower-dark-blue rounded px-10 py-3 font-semibold text-white hover:bg-blue-900"
-        onClick={() => {
-          // TODO: Remove this
-          console.log(props.contractor);
-        }}
       >
         SUBMIT
       </button>
