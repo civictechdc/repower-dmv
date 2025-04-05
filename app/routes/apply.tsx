@@ -3,7 +3,15 @@ import { Form, useActionData } from "@remix-run/react";
 import React, { useState, Dispatch, SetStateAction } from "react";
 
 import content from "../content/apply.json";
-import { SERVICES, STATES, Contractor, Service, State } from "../types";
+import {
+  SERVICES,
+  STATES,
+  Contractor,
+  Service,
+  State,
+  CERTIFICATIONS,
+  Certification,
+} from "../types";
 import {
   formatPhoneNumber,
   validateEmail,
@@ -39,7 +47,7 @@ interface CheckboxBlockProps extends ContractorBlockProps {
   id: string;
   name: string;
   value: string;
-  selectedValues: State[] | Service[];
+  selectedValues: State[] | Service[] | Certification[];
   field: "statesServed" | "services" | "certifications";
 }
 const handleContractorOnChange = (
@@ -137,7 +145,9 @@ const InputBlock = (props: InputBlockProps) => {
 const CheckboxBlock = (props: CheckboxBlockProps) => {
   const { contractor } = props;
 
-  const values: State[] | Service[] = contractor ? contractor[props.field] : [];
+  const values: State[] | Service[] | Certification[] = contractor
+    ? contractor[props.field]
+    : [];
   return (
     <div className="my-1 flex">
       <input
@@ -147,7 +157,10 @@ const CheckboxBlock = (props: CheckboxBlockProps) => {
         className="border-repower-dark-blue mt-1 h-4 w-4 shrink-0 appearance-none rounded-sm border-2 bg-white checked:border-0 checked:bg-blue-900"
         value={props["value"]}
         checked={
-          values.find((value: State | Service) => value.name === props["value"])
+          values.find(
+            (value: State | Service | Certification) =>
+              value.name === props["value"],
+          )
             ? true
             : false
         }
@@ -309,7 +322,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
       <p className="text-2xl font-semibold">Services</p>
       <div className="py-3">
         <p className="text-lg font-medium">
-          States Served (check all that apply):{" "}
+          States Served (Check all that apply):{" "}
           <span className="text-red-500">*</span>
         </p>
         <div className="pt-3">
@@ -332,7 +345,7 @@ const ServiceBlock = (props: ContractorBlockProps) => {
       </div>
       <div className="py-3">
         <p className="text-lg font-medium">
-          Services offered (check all that apply):{" "}
+          Services offered (Check all that apply):{" "}
           <span className="text-red-500">*</span>
         </p>
         <div className="pt-3">
@@ -357,6 +370,38 @@ const ServiceBlock = (props: ContractorBlockProps) => {
   );
 };
 
+const CertificationBlock = (props: ContractorBlockProps) => {
+  const { errors, contractor } = props;
+  const errorData = errors || {};
+  return (
+    <div>
+      <p className="text-2xl font-semibold">Certifications</p>
+      <div className="py-3">
+        <p className="text-lg font-medium">
+          Certifications (Check all that apply):{" "}
+        </p>
+        <div className="pt-3">
+          {CERTIFICATIONS.map((item, index) => (
+            <div key={index}>
+              <CheckboxBlock
+                {...{
+                  id: `certification_${index}`,
+                  name: `certification_${index}`,
+                  value: item,
+                  selectedValues: contractor?.certifications || [],
+                  field: "certifications",
+                  ...props,
+                }}
+              />
+            </div>
+          ))}
+          <ErrorMessageBlock value={errorData["certifications"]} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const SubmitBlock = (props: ContractorBlockProps) => {
   return (
     <div className="py-10">
@@ -364,6 +409,7 @@ const SubmitBlock = (props: ContractorBlockProps) => {
         type="submit"
         className="bg-repower-dark-blue rounded px-10 py-3 font-semibold text-white hover:bg-blue-900"
         onClick={() => {
+          // TODO: Remove this
           console.log(props.contractor);
         }}
       >
@@ -406,6 +452,12 @@ export default function Application() {
             />
             <hr className="my-5 border-2 border-gray-300" />
             <ServiceBlock
+              errors={actionData?.errors}
+              contractor={contractor}
+              setContractor={setContractor}
+            />
+            <hr className="my-5 border-2 border-gray-300" />
+            <CertificationBlock
               errors={actionData?.errors}
               contractor={contractor}
               setContractor={setContractor}
