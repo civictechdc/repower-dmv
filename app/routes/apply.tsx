@@ -19,7 +19,13 @@ export const meta: MetaFunction = () => [
 // TODO: Change this to different one
 const REDIRECT_URL = "/";
 
-interface InputBlockProps {
+interface ContractorBlockProps {
+  actionData: any;
+  contractor?: Contractor;
+  setContractor: Dispatch<SetStateAction<Contractor>>;
+}
+
+interface InputBlockProps extends ContractorBlockProps {
   id: string;
   name: string;
   label: string;
@@ -29,20 +35,13 @@ interface InputBlockProps {
   required: boolean;
 }
 
-interface CheckboxBlockProps {
+interface CheckboxBlockProps extends ContractorBlockProps {
   id: string;
   name: string;
   value: string;
   selectedValues: State[] | Service[];
   field: string;
 }
-
-interface ContractorBlockProps {
-  actionData: any;
-  contractor?: Contractor;
-  setContractor: Dispatch<SetStateAction<Contractor>>;
-}
-
 const handleContractorOnChange = (
   props: ContractorBlockProps,
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -63,11 +62,10 @@ const handleContractorOnChange = (
 };
 
 const handleCheckboxOnChange = (
-  props: CheckboxBlockProps & ContractorBlockProps,
+  props: CheckboxBlockProps,
   e: React.ChangeEvent<HTMLInputElement>,
 ) => {
-  const { setContractor } = props;
-  const selectedValues = props.selectedValues;
+  const { setContractor, selectedValues } = props;
 
   const exists =
     selectedValues.find((filter) => filter.name === e.target.value) || false;
@@ -110,7 +108,7 @@ const ErrorMessageBlock = (props: { value: string }) => {
   );
 };
 
-const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
+const InputBlock = (props: InputBlockProps) => {
   const { actionData } = props;
   const key: string = props["name"];
   return (
@@ -135,7 +133,7 @@ const InputBlock = (props: InputBlockProps & ContractorBlockProps) => {
   );
 };
 
-const CheckboxBlock = (props: CheckboxBlockProps & ContractorBlockProps) => {
+const CheckboxBlock = (props: CheckboxBlockProps) => {
   const { contractor } = props;
 
   const values: any = contractor
@@ -446,17 +444,17 @@ export async function action({ request }: ActionFunctionArgs) {
   for (const key in fieldDict) {
     const value = String(formData.get(key));
     if (isEmpty(value)) {
-      errors[key] = `Please provide the ${fieldDict[key]}.`;
+      errors[key] = `Please provide ${fieldDict[key]}.`;
     }
   }
 
   // Other validations
   if (!isEmpty(email) && !validateEmail(email)) {
-    errors.email = "Please provide the valid email.";
+    errors.email = "Please provide a valid email.";
   }
 
   if (!isEmpty(website) && !validateURL(website)) {
-    errors.website = "Please provide the valid website.";
+    errors.website = "Please provide a valid website URL.";
   }
 
   let statesServed = null;
