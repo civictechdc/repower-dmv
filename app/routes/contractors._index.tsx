@@ -7,6 +7,7 @@ import Select from "react-select";
 import Heading from "~/components/heading";
 import { getContractors } from "~/models/contractor.server";
 
+import content from "../content/contractors.json";
 import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
 
 export async function loader() {
@@ -168,7 +169,7 @@ export default function ContractorList() {
 
   return (
     <div>
-      <Heading>Contractor List</Heading>
+      <Heading>{content.heading}</Heading>
       <div className="mt-6 flex items-center justify-center space-x-4">
         <h3 className="font-bold">Filter by:</h3>
         <Select<Option<string>>
