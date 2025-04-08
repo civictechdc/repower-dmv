@@ -152,7 +152,7 @@ The content environment is deployed at [https://repower-dmv-content.fly.dev/](ht
 
 The content environment is deployed from the `cms-content-updates` branch and changes made in the content environment are committed to the `cms-content-updates` branch. When new changes are committed they will trigger a new deployment and after a few minutes the changes will be visible in the application.
 
-The Decap-CMS config file used for the content environment is [app/content/deployed-config.yml](./app/content/deployed-config.yml).
+The Decap-CMS config file used for the content environment is [app/content/content-config.yml](./app/content/content-config.yml).
 
 #### CMS in Local Development
 
@@ -171,7 +171,7 @@ The Decap-CMS config file used for the local environment is [app/content/local-c
 The implementation is somewhat complicated so it's described here:
 
 - There are custom routes implemented for the `/admin/` and `/admin/config.yml` paths. They have logic which checks the `DEPLOY_ENV` environment variable and if it is not set to one of `local` or `content` then they simply return 404. This is the case for all deployed environments except for the content environment.
-- If the `DEPLOY_ENV` value is set to `content` then [app/content/deployed-config.yml](./app/content/deployed-config.yml) is returned by the `/admin/config.yml` path.
+- If the `DEPLOY_ENV` value is set to `content` then [app/content/content-config.yml](./app/content/content-config.yml) is returned by the `/admin/config.yml` path.
 - If the `DEPLOY_ENV` value is set to `local` then [app/content/local-config.yml](./app/content/local-config.yml) is returned by the `/admin/config.yml` path.
 - The `/admin/` path, when `DEPLOY_ENV` is set to a valid value, returns some static HTML which then serves the DecapCMS frontend from a CDN cache.
 
@@ -179,6 +179,6 @@ The implementation is somewhat complicated so it's described here:
 
 In order for content to be managed by the CMS it needs to be configured. That means:
 
-1. Making sure the information architecture is defined in [app/content/deployed-config.yml](./app/content/deployed-config.yml) and [app/content/local-config.yml](./app/content/local-config.yml).
+1. Making sure the information architecture is defined in [app/content/content-config.yml](./app/content/content-config.yml) and [app/content/local-config.yml](./app/content/local-config.yml).
 2. Storing the content strings in a JSON file inside the [app/content/](./app/content/) directory.
 3. Where the content is used in the application, import it from the relevant JSON file using the appropriate key. You can import entire JSON files like this: `import content from "../content/apply.json";`

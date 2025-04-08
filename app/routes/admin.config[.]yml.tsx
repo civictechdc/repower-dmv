@@ -3,7 +3,7 @@ import path from "path";
 
 import { isCmsEnabled } from "../content/utils";
 
-const CMS_DEPLOYED_CONFIG_FILE = "app/content/deployed-config.yml";
+const CMS_DEPLOYED_CONFIG_FILE = "app/content/content-config.yml";
 const CMS_LOCAL_CONFIG_FILE = "app/content/local-config.yml";
 
 export const loader = async () => {
