@@ -6,9 +6,33 @@ collections:
   - name: "page"
     label: "Page"
     files:
+      - label: "Home"
+        name: "home"
+        preview_path: ""
+        file: "app/content/home.json"
+        fields:
+          - { label: Heading, name: heading, widget: string }
+      - label: "About"
+        name: "about"
+        preview_path: "about"
+        file: "app/content/about.json"
+        fields:
+          - { label: Heading, name: heading, widget: string }
       - label: "Contractor List"
         name: "contractors"
         preview_path: "contractors"
         file: "app/content/contractors.json"
+        fields:
+          - { label: Heading, name: heading, widget: string }
+      - label: "Incentives"
+        name: "incentives"
+        preview_path: "incentives"
+        file: "app/content/incentives.json"
+        fields:
+          - { label: Heading, name: heading, widget: string }
+      - label: "Resources"
+        name: "resources"
+        preview_path: "resources"
+        file: "app/content/resources.json"
         fields:
           - { label: Heading, name: heading, widget: string }
