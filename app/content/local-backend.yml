@@ -1,0 +1,5 @@
+# Note: collection configs are specified in config.yml and shared across multiple backends
+local_backend: true
+
+backend:
+  name: git-gateway

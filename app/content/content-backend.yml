@@ -1,0 +1,8 @@
+# Note: collection configs are specified in config.yml and shared across multiple backends
+site_url: https://repower-dmv-content.fly.dev
+
+backend:
+  name: github
+  repo: civictechdc/repower-dmv
+  branch: cms-content-updates
+  base_url: https://decap.sheldonb.com

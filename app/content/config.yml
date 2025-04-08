@@ -1,11 +1,4 @@
-site_url: https://repower-dmv-content.fly.dev
-
-backend:
-  name: github
-  repo: civictechdc/repower-dmv
-  branch: cms-content-updates
-  base_url: https://decap.sheldonb.com
-
+# Note: the backends are configured per-env in separate config files. See local-backend.yml and content-backend.yml
 media_folder: assets/cms-uploads
 public_folder: public/build
 

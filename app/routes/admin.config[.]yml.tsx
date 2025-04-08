@@ -3,8 +3,9 @@ import path from "path";
 
 import { isCmsEnabled } from "../content/utils";
 
-const CMS_DEPLOYED_CONFIG_FILE = "app/content/content-config.yml";
-const CMS_LOCAL_CONFIG_FILE = "app/content/local-config.yml";
+const COMMON_CONFIG_FILE = "app/content/config.yml";
+const CONTENT_ENV_BACKEND_CONFIG_FILE = "app/content/content-backend.yml";
+const LOCAL_ENV_BACKEND_CONFIG_FILE = "app/content/local-backend.yml";
 
 export const loader = async () => {
   if (!isCmsEnabled()) {
@@ -13,14 +14,19 @@ export const loader = async () => {
   }
 
   // Load the local config for local development or the deployed config for anything else
-  let filePath =
+  let backendConfigFilePath =
     process.env.DEPLOY_ENV === "local"
-      ? CMS_LOCAL_CONFIG_FILE
-      : CMS_DEPLOYED_CONFIG_FILE;
-  filePath = path.resolve(filePath);
-  const config = fs.readFileSync(filePath, "utf-8");
+      ? LOCAL_ENV_BACKEND_CONFIG_FILE
+      : CONTENT_ENV_BACKEND_CONFIG_FILE;
+  backendConfigFilePath = path.resolve(backendConfigFilePath);
+  const backendConfig = fs.readFileSync(backendConfigFilePath, "utf-8");
 
-  return new Response(config, {
+  const commonConfigFilePath = path.resolve(COMMON_CONFIG_FILE);
+  const commonConfig = fs.readFileSync(commonConfigFilePath, "utf-8");
+
+  const fullConfig = [backendConfig, commonConfig].join("\n");
+
+  return new Response(fullConfig, {
     headers: {
       "Content-Type": "text/yaml",
     },
