@@ -1,3 +1,5 @@
+import { isCmsEnabled } from "../content/utils";
+
 // Loads a CMS admin page from CDN. This will require authentication through github for a user to proceed.
 const CMS_HTML = `
 <!doctype html>
@@ -15,17 +17,12 @@ const CMS_HTML = `
 </html>
 `;
 
-// Define a function to check if the CMS is enabled
-function isCmsEnabled() {
-  // You can replace this with your actual logic to determine if the CMS is enabled
-  return process.env.CMS_ENABLED === "true";
-}
-
 export const loader = async () => {
-  // if (!isCmsEnabled()) {
-  //   // Return a 404 response if the CMS is not enabled
-  //   throw new Response("Not Found", { status: 404 });
-  // }
+  if (!isCmsEnabled()) {
+    // Return a 404 response if the CMS is not enabled
+    throw new Response("Not Found", { status: 404 });
+  }
+
   // Return the HTML content
   return new Response(CMS_HTML, {
     headers: {

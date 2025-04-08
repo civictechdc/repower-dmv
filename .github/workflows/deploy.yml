@@ -140,7 +140,7 @@ jobs:
 
       - name: 🚀 Deploy Content Updates
         if: ${{ github.ref == 'refs/heads/cms-content-updates' }}
-        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --app ${{ steps.app_name.outputs.value }}-content
+        run: flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }} --env DEPLOY_ENV=content --app ${{ steps.app_name.outputs.value }}-content
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
