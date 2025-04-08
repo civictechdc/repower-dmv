@@ -55,5 +55,7 @@ export default {
   		}
   	}
   },
+  /* eslint-disable */
   plugins: [require("tailwindcss-animate")],
+  /* eslint-enable */
 } satisfies Config;
