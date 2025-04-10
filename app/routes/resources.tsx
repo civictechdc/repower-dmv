@@ -52,7 +52,7 @@ export default function Index() {
           <a className="text-blue-500" href="https://www.bbb.org" target="_blank" rel="noreferrer">Better Business Bureau (BBB)</a>
         </li>
         <li>
-          <a className="text-blue-500" href="https://www.angi.com" target="_blank" rel="noreferrer">Angie's List Reviews and Ratings</a>
+          <a className="text-blue-500" href="https://www.angi.com" target="_blank" rel="noreferrer">Angie&apos;s List Reviews and Ratings</a>
         </li>
         <li>
           <a className="text-blue-500" href="https://www.yelp.com" target="_blank" rel="noreferrer">Yelp Contractor Reviews</a>

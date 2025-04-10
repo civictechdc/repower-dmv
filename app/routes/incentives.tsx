@@ -81,7 +81,7 @@ export default function Index() {
         </li>
       </ol>
       <p className="mt-4">
-        Following these steps ensures you maximize available incentives and rebates, significantly reducing the overall cost of your home's electrification upgrades.
+        Following these steps ensures you maximize available incentives and rebates, significantly reducing the overall cost of your home&apos;s electrification upgrades.
       </p>
     </div>
   );
