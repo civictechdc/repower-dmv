@@ -10,6 +10,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
+import Footer from "~/components/footer";
 import Navbar from "~/components/nav";
 import { getUser } from "~/session.server";
 import stylesheet from "~/tailwind.css";
@@ -39,6 +40,7 @@ export default function App() {
         <main className="relative min-h-screen bg-white p-8 mt-[104px]">
           <Outlet />
         </main>
+        <Footer />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
