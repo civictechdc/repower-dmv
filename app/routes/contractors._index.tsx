@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 
 import Heading from "~/components/heading";
+import { Ratings } from "~/components/rating";
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
@@ -74,7 +75,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               alt="Placeholder"
             />
           </Link>
-          <div className="grow px-4 pb-4">
+          <div className="w-[400px] px-4 pb-4">
             <ul>
               {contractor.statesServed.map((item, index) => (
                 <li
@@ -106,21 +107,24 @@ const ContractorBlock = (props: ContractorBlockProps) => {
                 </li>
               ))}
             </ul>
-            <a
-              href={contractor.website}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block underline text-sm hover:text-blue-500"
-            >
-              Website
-            </a>
           </div>
-          <div className="grow px-4 pb-4 text-sm">
-            <PhoneLink phoneNumber={contractor.phone} />
-            <p>{contractor.email}</p>
-            <p>{contractor.addressLine1}</p>
-            {contractor.addressLine2 ? <p>{contractor.addressLine2}</p> : null}
-            <p>{`${contractor.city}, ${contractor.state} ${contractor.zip}`}</p>
+          <div className="flex flex-col grow px-4 pb-4 text-sm">
+            <div className="flex justify-end text-nowrap">
+              <a
+                href={contractor.website}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block underline text-sm hover:text-blue-500 mr-2"
+              >
+                Website
+              </a>
+              <a href={`mailto:${contractor.email}`} rel="noreferrer" className="inline-block underline text-sm hover:text-blue-500 mr-2">Email</a>
+              <PhoneLink phoneNumber={contractor.phone} />
+            </div>
+            <p className="text-end">{`${contractor.city}, ${contractor.state}`}</p>
+            <div className="flex mt-auto justify-end">
+              <Ratings rating={4.4} title="4.4"/>
+            </div>
           </div>
         </div>
       </div>
