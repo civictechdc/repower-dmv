@@ -48,6 +48,7 @@ model Contractor {
   city             String
   state            String
   zip              String
+  isDraft          Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

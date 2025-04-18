@@ -1,6 +1,7 @@
 import { MetaFunction, ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import React, { useState, Dispatch, SetStateAction } from "react";
+import { createContractor } from "~/models/contractor.server";
 
 import content from "../content/apply.json";
 import {
@@ -485,11 +486,14 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const errors: Record<string, string> = {};
 
+  let data: Record<string, string> = {};
   // Check if required fields have missing values
   for (const key in fieldDict) {
     const value = String(formData.get(key));
     if (isEmpty(value)) {
       errors[key] = `Please provide ${fieldDict[key]}.`;
+    } else {
+      data[key] = value;
     }
   }
 
@@ -502,25 +506,40 @@ export async function action({ request }: ActionFunctionArgs) {
     errors.website = "Please provide a valid website URL.";
   }
 
-  let statesServed = null;
+  let statesServed: Array<String> = [];
   for (let i = 0; i < STATES.length; i++) {
-    statesServed = statesServed || formData.get(`state_served_${i}`);
+    const val = formData.get(`state_served_${i}`);
+    if (val !== null) {
+      statesServed.push(String(val));
+    }
   }
-  if (!statesServed) {
+  if (statesServed.length == 0) {
     errors.statesServed = "Please select at least one state.";
   }
 
-  let services = null;
+  let services: Array<String> = [];
   for (let i = 0; i < SERVICES.length; i++) {
-    services = services || formData.get(`service_${i}`);
+    const val = formData.get(`service_${i}`);
+    if (val !== null) {
+      services.push(String(val));
+    }
   }
-  if (!services) {
+  if (services.length == 0) {
     errors.services = "Please select at least one service.";
   }
-
+  let certifications: Array<String> = [];
+  for (let i = 0; i < CERTIFICATIONS.length; i++) {
+    const val = formData.get(`certification_${i}`);
+    if (val !== null) {
+      certifications.push(String(val));
+    }
+  }
   if (Object.keys(errors).length > 0) {
     return { errors };
-  }
-
+  }  
+  
+  const contractor = await createContractor(
+    {...data, services, statesServed, certifications}
+  );
   return redirect(REDIRECT_URL);
 }

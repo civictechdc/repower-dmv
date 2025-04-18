@@ -1,0 +1,1 @@
+ALTER TABLE "Contractor" ADD COLUMN "isDraft" INTEGER DEFAULT 1;
