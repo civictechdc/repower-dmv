@@ -1,7 +1,7 @@
 import { Contractor } from "@prisma/client";
 
 import { prisma } from "~/db.server";
-import { Certification, Service, State } from "~/types";
+import { Certification, Service, State, CreateContractorPayload } from "~/types";
 
 export const getContractorById = async (id: Contractor["id"]) => {
   try {
@@ -66,36 +66,27 @@ export const getContractors = async (page = 1, pageSize = 10) => {
   }
 };
 
-export async function createContractor(data) {
+export async function createContractor(contractor: CreateContractorPayload) {
   try {
     const statesServed = []
-    for (const stateName of data["statesServed"]) {
-      const state: State = await prisma.state.findFirst({where: {name: stateName}});
-      if (state == null) {
-        throw new Error("Could not find state " + stateName);
-      }
+    for (const stateName of contractor["statesServed"]) {
+      const state: State = await prisma.state.findFirstOrThrow({where: {name: stateName}});
       statesServed.push(state);
     }
     const services = [];
-    for (const serviceName of data["services"]) {
-      const service: Service = await prisma.service.findFirst({where: {name: serviceName}});
-      if (service == null) {
-        throw new Error("Could not find service " + serviceName);
-      }
+    for (const serviceName of contractor["services"]) {
+      const service: Service = await prisma.service.findFirstOrThrow({where: {name: serviceName}});
       services.push(service);
     }
     const certifications = [];
-    for (const certificationName of data["certifications"]) {
-      const certification: Certification = await prisma.certification.findFirst({where: {shortName: certificationName}});
-      if (certification == null) {
-        throw new Error("Could not find certification " + certificationName);
-      }
+    for (const certificationName of contractor["certifications"]) {
+      const certification: Certification = await prisma.certification.findFirstOrThrow({where: {shortName: certificationName}});
       certifications.push(certification);
     }
 
     return prisma.contractor.create({
       data: {
-        ...data,
+        ...contractor,
         statesServed: {
           connect: statesServed 
         },
@@ -109,7 +100,7 @@ export async function createContractor(data) {
       }
     });
   } catch (error) {
-    console.log("Error creating contractor", error);
+    console.error("Error creating contractor", error);
     throw new Error("Could not create contractor listing");
   }
 };

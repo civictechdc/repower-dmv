@@ -1,6 +1,7 @@
 import { MetaFunction, ActionFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import React, { useState, Dispatch, SetStateAction } from "react";
+
 import { createContractor } from "~/models/contractor.server";
 
 import content from "../content/apply.json";
@@ -12,6 +13,7 @@ import {
   State,
   CERTIFICATIONS,
   Certification,
+  CreateContractorPayload,
 } from "../types";
 import {
   formatPhoneNumber,
@@ -476,24 +478,46 @@ export async function action({ request }: ActionFunctionArgs) {
     phone: "phone number",
     website: "website",
     addressLine1: "street address",
+    addressLine2: "street address",
     city: "city",
     state: "state",
     zip: "zip code",
   };
+
+  const optional: Set<string> = new Set<string>(['addressLine2']);
 
   const email = String(formData.get("email"));
   const website = String(formData.get("website"));
 
   const errors: Record<string, string> = {};
 
-  let data: Record<string, string> = {};
+  const payload: CreateContractorPayload = {} as CreateContractorPayload;
   // Check if required fields have missing values
   for (const key in fieldDict) {
     const value = String(formData.get(key));
-    if (isEmpty(value)) {
+    if (isEmpty(value) && !optional.has(key)) {
       errors[key] = `Please provide ${fieldDict[key]}.`;
     } else {
-      data[key] = value;
+      switch(key) {
+        case 'name': payload.name = value;
+        break;
+        case 'email': payload.email = value;
+        break;
+        case 'phone': payload.phone = value;
+        break;
+        case 'website': payload.website = value;
+        break;
+        case 'addressLine1': payload.addressLine1 = value;
+        break;
+        case 'addressLine2': payload.addressLine2 = value;
+        break;
+        case 'city': payload.city = value;
+        break;
+        case 'state': payload.state = value;
+        break;
+        case 'zip': payload.zip = value;
+        break; 
+      }
     }
   }
 
@@ -506,7 +530,7 @@ export async function action({ request }: ActionFunctionArgs) {
     errors.website = "Please provide a valid website URL.";
   }
 
-  let statesServed: Array<String> = [];
+  const statesServed: string[] = [];
   for (let i = 0; i < STATES.length; i++) {
     const val = formData.get(`state_served_${i}`);
     if (val !== null) {
@@ -517,7 +541,7 @@ export async function action({ request }: ActionFunctionArgs) {
     errors.statesServed = "Please select at least one state.";
   }
 
-  let services: Array<String> = [];
+  const services: string[] = [];
   for (let i = 0; i < SERVICES.length; i++) {
     const val = formData.get(`service_${i}`);
     if (val !== null) {
@@ -527,7 +551,7 @@ export async function action({ request }: ActionFunctionArgs) {
   if (services.length == 0) {
     errors.services = "Please select at least one service.";
   }
-  let certifications: Array<String> = [];
+  const certifications: string[] = [];
   for (let i = 0; i < CERTIFICATIONS.length; i++) {
     const val = formData.get(`certification_${i}`);
     if (val !== null) {
@@ -538,8 +562,8 @@ export async function action({ request }: ActionFunctionArgs) {
     return { errors };
   }  
   
-  const contractor = await createContractor(
-    {...data, services, statesServed, certifications}
+  await createContractor(
+    {...payload, services, statesServed, certifications}
   );
   return redirect(REDIRECT_URL);
 }

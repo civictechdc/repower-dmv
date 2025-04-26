@@ -1,5 +1,6 @@
 import { faker } from "@faker-js/faker";
-import {STATES, CERTIFICATIONS, SERVICES} from "~/types";
+
+import {STATES, CERTIFICATIONS, SERVICES} from "../../app/types";
 
 describe("smoke tests", () => {
   afterEach(() => {
@@ -49,8 +50,11 @@ describe("smoke tests", () => {
 
     cy.findByText("No notes yet");
   });
+});
 
-  it.skip("should allow contractors to request to be listed", () => {
+// Workflows that don't require a login
+describe("non-auth workflows", () => {
+  it("should allow contractors to request to be listed", () => {
     const testContractor = {
       name: faker.company.name(),
       email: faker.internet.email(),
@@ -79,7 +83,9 @@ describe("smoke tests", () => {
     cy.get("#service_1").check();
     cy.get("#certification_0").check();
     cy.get("#certification_1").check();
+    cy.get("button[type=\"submit\"]").click();
+    cy.location().should((loc) => {
+      expect(loc.pathname).to.eq('/');
+    });
   });
-
 });
-

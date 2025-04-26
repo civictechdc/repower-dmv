@@ -47,3 +47,19 @@ export interface Contractor {
   services: Service[];
   certifications: Certification[];
 }
+
+export interface CreateContractorPayload {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  website: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zip: string;
+  statesServed: string[];
+  services: string[];
+  certifications: string[];
+}
