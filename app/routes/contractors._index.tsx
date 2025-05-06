@@ -1,6 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import type { MetaFunction, ActionFunctionArgs } from "@remix-run/node";
+import { useLoaderData, Link, Form } from "@remix-run/react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 
@@ -10,6 +10,16 @@ import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
 import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
+
+export async function action({ request }: ActionFunctionArgs) {
+  const body = await request.formData();
+  // const todo = await fakeCreateTodo({
+  //   title: body.get("title"),
+  // });
+  console.log(JSON.stringify(body));
+  console.log("Tally ho");
+  return { test: true };
+}
 
 export async function loader() {
   const data = await getContractors();
@@ -52,7 +62,11 @@ const filterContractors = (
         selectedCertifications.includes(cert.shortName),
       );
 
-    return matchesSelectedState && matchesSelectedServices && matchesSelectedCertifications;
+    return (
+      matchesSelectedState &&
+      matchesSelectedServices &&
+      matchesSelectedCertifications
+    );
   });
   return filtered;
 };
@@ -66,9 +80,16 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   return (
     <li key={contractor.name} className="flex justify-center">
       <div className="relative w-full max-w-3xl items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
-        <Link to={"/contractors/"+contractor.id}><h2 className="inline-block p-2 text-xl font-bold hover:underline">{contractor.name}</h2></Link>
+        <Link to={"/contractors/" + contractor.id}>
+          <h2 className="inline-block p-2 text-xl font-bold hover:underline">
+            {contractor.name}
+          </h2>
+        </Link>
         <div className="flex">
-          <Link to={"/contractors/"+contractor.id} className="flex-shrink-0 pb-2 pl-2 cursor-pointer">
+          <Link
+            to={"/contractors/" + contractor.id}
+            className="flex-shrink-0 cursor-pointer pb-2 pl-2"
+          >
             <img
               className="h-24 w-24 object-cover hover:shadow-lg"
               src="https://designsystem.digital.gov/img/introducing-uswds-2-0/built-to-grow--alt.jpg"
@@ -108,22 +129,28 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               ))}
             </ul>
           </div>
-          <div className="flex flex-col grow px-4 pb-4 text-sm">
+          <div className="flex grow flex-col px-4 pb-4 text-sm">
             <div className="flex justify-end text-nowrap">
               <a
                 href={contractor.website}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-block underline text-sm hover:text-blue-500 mr-2"
+                className="mr-2 inline-block text-sm underline hover:text-blue-500"
               >
                 Website
               </a>
-              <a href={`mailto:${contractor.email}`} rel="noreferrer" className="inline-block underline text-sm hover:text-blue-500 mr-2">Email</a>
+              <a
+                href={`mailto:${contractor.email}`}
+                rel="noreferrer"
+                className="mr-2 inline-block text-sm underline hover:text-blue-500"
+              >
+                Email
+              </a>
               <PhoneLink phoneNumber={contractor.phone} />
             </div>
             <p className="text-end">{`${contractor.city}, ${contractor.state}`}</p>
-            <div className="flex mt-auto justify-end">
-              <Ratings rating={4.4} title="4.4"/>
+            <div className="mt-auto flex justify-end">
+              <Ratings rating={4.4} title="4.4" />
             </div>
           </div>
         </div>
@@ -138,7 +165,9 @@ export default function ContractorList() {
   const [contractors] = useState(initialContractors);
   const [selectedState, setSelectedState] = useState<string | "">();
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [selectedCertifications, setSelectedCertifications] = useState<string[]>([]);
+  const [selectedCertifications, setSelectedCertifications] = useState<
+    string[]
+  >([]);
   const [filteredContractors, setFilteredContractors] = useState(contractors);
 
   useEffect(() => {
@@ -171,48 +200,61 @@ export default function ContractorList() {
     setSelectedCertifications(options.map((option) => option.value));
   };
 
+  const onZipChanged = () => {};
+  // const onSubmit = () => {};
+
   return (
     <div>
       <Heading>{content.heading}</Heading>
-      <div className="mt-6 flex items-center justify-center space-x-4">
-        <h3 className="font-bold">Filter by:</h3>
-        <Select<Option<string>>
-          classNames={{
-            control: () => "!border-2 !border-green-200",
-          }}
-          isClearable
-          placeholder="Anywhere"
-          options={STATES.map((state) => ({
-            value: state,
-            label: state,
-          }))}
-          onChange={onSelectedStateChanged}
+      <Form method="post">
+        <div className="mt-6 flex items-center justify-center space-x-4">
+          <h3 className="font-bold">Filter by:</h3>
+          <Select<Option<string>>
+            classNames={{
+              control: () => "!border-2 !border-green-200",
+            }}
+            isClearable
+            placeholder="Anywhere"
+            options={STATES.map((state) => ({
+              value: state,
+              label: state,
+            }))}
+            onChange={onSelectedStateChanged}
+          />
+          <Select<Option<string>, true>
+            classNames={{
+              control: () => "!border-2 !border-blue-200",
+            }}
+            isMulti
+            placeholder="Any service"
+            options={SERVICES.map((service) => ({
+              value: service,
+              label: service,
+            }))}
+            onChange={onSelectedServicesChanged}
+          />
+          <Select<Option<string>, true>
+            classNames={{
+              control: () => "!border-2 !border-orange-200",
+            }}
+            isMulti
+            placeholder="Any certifications"
+            options={CERTIFICATIONS.map((cert) => ({
+              value: cert,
+              label: cert,
+            }))}
+            onChange={onSelectedCertificationsChanged}
+          />
+        </div>
+        <input
+          className="border-2"
+          type="number"
+          id="zip"
+          name="zip"
+          onChange={onZipChanged}
         />
-        <Select<Option<string>, true>
-          classNames={{
-            control: () => "!border-2 !border-blue-200",
-          }}
-          isMulti
-          placeholder="Any service"
-          options={SERVICES.map((service) => ({
-            value: service,
-            label: service,
-          }))}
-          onChange={onSelectedServicesChanged}
-        />
-        <Select<Option<string>, true>
-          classNames={{
-            control: () => "!border-2 !border-orange-200",
-          }}
-          isMulti
-          placeholder="Any certifications"
-          options={CERTIFICATIONS.map((cert) => ({
-            value: cert,
-            label: cert,
-          }))}
-          onChange={onSelectedCertificationsChanged}
-        />
-      </div>
+        <button type="submit">Submit</button>
+      </Form>
       <ul className="mt-6 space-y-4">
         {filteredContractors.map((contractor: Contractor) => (
           <ContractorBlock contractor={contractor} key={contractor.name} />
