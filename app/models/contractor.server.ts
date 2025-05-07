@@ -1,6 +1,7 @@
 import { Contractor } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { sortByDistanceFromZip } from "~/lib/distances";
 import {
   Certification,
   Service,
@@ -49,6 +50,7 @@ export const getContractors = async (page = 1, pageSize = 10) => {
   const certifications = ["CEA", "HEP"];
   const services = ["Electrical"];
   const stateServed = "DC";
+  const zip = "20002";
 
   if (certifications) {
     filters["certifications"] = {
@@ -78,8 +80,12 @@ export const getContractors = async (page = 1, pageSize = 10) => {
     };
   }
 
+  // Query DB for contractors matching the filters specified
+  // todo: ensure indices exist as necessary to ensure optimized searched for any permutation of filters
+  let contractors;
+  let totalContractors;
   try {
-    const contractors = await prisma.contractor.findMany({
+    contractors = await prisma.contractor.findMany({
       skip: (page - 1) * pageSize,
       take: pageSize,
       include: {
@@ -93,17 +99,27 @@ export const getContractors = async (page = 1, pageSize = 10) => {
       where: filters,
     });
 
-    const totalContractors = await prisma.contractor.count();
-
-    return {
-      contractors,
-      totalPages: Math.ceil(totalContractors / pageSize),
-      currentPage: page,
-    };
+    totalContractors = await prisma.contractor.count();
   } catch (error) {
     console.error("Error fetching contractors:", error);
     throw new Error("Failed to fetch contractors");
   }
+
+  // If there's a zip filter then go fetch distances and sort by distance
+  if (zip) {
+    try {
+      contractors = await sortByDistanceFromZip(contractors, zip);
+    } catch (error) {
+      console.log("Error fetching distances from zip: ", error);
+      throw new Error("Failed to fetch distances from zip");
+    }
+  }
+
+  return {
+    contractors,
+    totalPages: Math.ceil(totalContractors / pageSize),
+    currentPage: page,
+  };
 };
 
 export async function createContractor(contractor: CreateContractorPayload) {

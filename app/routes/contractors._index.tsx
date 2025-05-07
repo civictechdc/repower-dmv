@@ -18,7 +18,10 @@ export async function action({ request }: ActionFunctionArgs) {
   // });
   console.log(JSON.stringify(body));
   console.log("Tally ho");
-  return { test: true };
+  // Search for contractors matching the filter settings and pagination
+  // Search google matrix API for distances from zip
+  const data = await getContractors();
+  return json(data);
 }
 
 export async function loader() {
