@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import type { MetaFunction, ActionFunctionArgs } from "@remix-run/node";
-import { useLoaderData, Link, Form } from "@remix-run/react";
-import { useState, useEffect } from "react";
+import { useLoaderData, Link, useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 import Heading from "~/components/heading";
@@ -9,22 +9,40 @@ import { Ratings } from "~/components/rating";
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import { STATES, SERVICES, CERTIFICATIONS, State, Contractor } from "../types";
+import { STATES, SERVICES, CERTIFICATIONS, Contractor, ContractorFilters } from "../types";
 
 export async function action({ request }: ActionFunctionArgs) {
   const body = await request.formData();
-  // const todo = await fakeCreateTodo({
-  //   title: body.get("title"),
-  // });
-  console.log(JSON.stringify(body));
-  console.log("Tally ho");
-  return { test: true };
-}
 
-export async function loader() {
-  const data = await getContractors();
+  console.log(JSON.stringify(body, null, 2));
+  let services: string[] = [];
+  let certifications: string[] = [];
+
+  for (var pair of body.entries()) {
+    if (pair[0] == "services") {
+      services.push(pair[1].toString())
+    } 
+    if (pair[0] == "certifications") {
+      certifications.push(pair[1].toString())
+    } 
+  }
+  
+  let filters : ContractorFilters = {
+    "zip": body.get("zip")?.toString() ?? "",
+    "stateServed": body.get("state")?.toString() ?? "",
+    "services": services,
+    "certifications": certifications
+  }
+
+  const data = await getContractors(filters);
   return json(data);
 }
+
+export async function loader(filters = {}) {
+  const data = await getContractors(filters);
+  return json(data);
+}
+
 export const meta: MetaFunction = () => [
   { title: "Contractor List | re:Power DMV" },
 ];
@@ -37,38 +55,6 @@ const PhoneLink = (props: PhoneLinkProps) => {
   const { phoneNumber } = props;
   const formattedPhoneNumber = `(${phoneNumber.slice(0, 3)})${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6)}`;
   return <a href={`tel:+1${phoneNumber}`}>{formattedPhoneNumber}</a>;
-};
-
-const filterContractors = (
-  contractors: Contractor[],
-  selectedState: string | "",
-  selectedServices: string[],
-  selectedCertifications: string[],
-) => {
-  const filtered = contractors.filter((contractor) => {
-    const matchesSelectedState =
-      selectedState === "" ||
-      contractor.statesServed.some((s: State) => s.name == selectedState);
-
-    const matchesSelectedServices =
-      selectedServices.length === 0 ||
-      contractor.services.some((service) =>
-        selectedServices.includes(service.name),
-      );
-
-    const matchesSelectedCertifications =
-      selectedCertifications.length === 0 ||
-      contractor.certifications.some((cert) =>
-        selectedCertifications.includes(cert.shortName),
-      );
-
-    return (
-      matchesSelectedState &&
-      matchesSelectedServices &&
-      matchesSelectedCertifications
-    );
-  });
-  return filtered;
 };
 
 interface ContractorBlockProps {
@@ -160,56 +146,35 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
+  console.log("A");  
   const initialContractors = useLoaderData<typeof loader>()
     .contractors as Contractor[];
   const [contractors] = useState(initialContractors);
-  const [selectedState, setSelectedState] = useState<string | "">();
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [selectedCertifications, setSelectedCertifications] = useState<
-    string[]
-  >([]);
+  console.log("B");  
   const [filteredContractors, setFilteredContractors] = useState(contractors);
 
-  useEffect(() => {
-    const newFilteredContractors = filterContractors(
-      contractors,
-      selectedState ?? "",
-      selectedServices,
-      selectedCertifications,
-    );
-    setFilteredContractors(newFilteredContractors);
-  }, [contractors, selectedState, selectedServices, selectedCertifications]);
+  const fetcher = useFetcher();
+  
+  useEffect(() => { 
+    console.log("C");    
+    setFilteredContractors(fetcher.data?.contractors)
+    console.log("D");
+  }, [fetcher.data]);
 
   interface Option<Type> {
     value: Type;
     label: Type;
   }
-  const onSelectedStateChanged = (option: Option<string> | null | void) => {
-    setSelectedState(option?.value);
-  };
-
-  const onSelectedServicesChanged = (
-    options: readonly Option<string>[] | [],
-  ) => {
-    setSelectedServices(options.map((option) => option.value));
-  };
-
-  const onSelectedCertificationsChanged = (
-    options: readonly Option<string>[] | [],
-  ) => {
-    setSelectedCertifications(options.map((option) => option.value));
-  };
-
-  const onZipChanged = () => {};
-  // const onSubmit = () => {};
 
   return (
     <div>
       <Heading>{content.heading}</Heading>
-      <Form method="post">
+      <fetcher.Form method="post">
         <div className="mt-6 flex items-center justify-center space-x-4">
-          <h3 className="font-bold">Filter by:</h3>
+        <h3 className="font-bold">Filter by:</h3>
           <Select<Option<string>>
+            name="state"
+            id="state"
             classNames={{
               control: () => "!border-2 !border-green-200",
             }}
@@ -219,9 +184,10 @@ export default function ContractorList() {
               value: state,
               label: state,
             }))}
-            onChange={onSelectedStateChanged}
           />
           <Select<Option<string>, true>
+            name="services"
+            id="services"
             classNames={{
               control: () => "!border-2 !border-blue-200",
             }}
@@ -231,9 +197,10 @@ export default function ContractorList() {
               value: service,
               label: service,
             }))}
-            onChange={onSelectedServicesChanged}
           />
           <Select<Option<string>, true>
+            name="certifications"
+            id="certifications"
             classNames={{
               control: () => "!border-2 !border-orange-200",
             }}
@@ -243,18 +210,16 @@ export default function ContractorList() {
               value: cert,
               label: cert,
             }))}
-            onChange={onSelectedCertificationsChanged}
           />
-        </div>
         <input
           className="border-2"
           type="number"
           id="zip"
           name="zip"
-          onChange={onZipChanged}
         />
+        </div>
         <button type="submit">Submit</button>
-      </Form>
+      </fetcher.Form>
       <ul className="mt-6 space-y-4">
         {filteredContractors.map((contractor: Contractor) => (
           <ContractorBlock contractor={contractor} key={contractor.name} />

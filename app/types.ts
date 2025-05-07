@@ -63,3 +63,10 @@ export interface CreateContractorPayload {
   services: string[];
   certifications: string[];
 }
+
+export interface ContractorFilters {
+  stateServed: string;
+  services: string[];
+  certifications: string[];
+  zip: string
+}

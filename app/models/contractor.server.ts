@@ -38,7 +38,7 @@ export async function getContractorByName(name: Contractor["name"]) {
   }
 }
 
-export const getContractors = async (page = 1, pageSize = 10) => {
+export const getContractors = async (filters = {}, page = 1, pageSize = 10) => {
   try {
     const contractors = await prisma.contractor.findMany({
       skip: (page - 1) * pageSize,
