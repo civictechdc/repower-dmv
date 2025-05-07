@@ -13,8 +13,6 @@ import { STATES, SERVICES, CERTIFICATIONS, Contractor, ContractorFilters } from 
 
 export async function action({ request }: ActionFunctionArgs) {
   const body = await request.formData();
-
-  console.log(JSON.stringify(body, null, 2));
   let services: string[] = [];
   let certifications: string[] = [];
 
@@ -146,19 +144,17 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 };
 
 export default function ContractorList() {
-  console.log("A");  
   const initialContractors = useLoaderData<typeof loader>()
     .contractors as Contractor[];
   const [contractors] = useState(initialContractors);
-  console.log("B");  
   const [filteredContractors, setFilteredContractors] = useState(contractors);
 
   const fetcher = useFetcher();
   
   useEffect(() => { 
-    console.log("C");    
-    setFilteredContractors(fetcher.data?.contractors)
-    console.log("D");
+    if (fetcher.data) {
+      setFilteredContractors(fetcher.data?.contractors)
+    }
   }, [fetcher.data]);
 
   interface Option<Type> {
