@@ -104,7 +104,7 @@ jobs:
         run: npm run build
 
       - name: 🌱 Seed Database
-        run: npx run setup
+        run: npm run setup
 
       - name: 🌳 Cypress run
         uses: cypress-io/github-action@v6
