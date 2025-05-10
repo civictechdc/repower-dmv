@@ -38,16 +38,6 @@ function Navbar() {
           <ul className="flex flex-col items-center justify-end gap-x-8 gap-y-4 text-nowrap text-center text-lg md:flex-row [&>li:hover]:text-gray-300 [&>li]:inline-block">
             <li className="inline-block">
               <NavLink
-                to="/about"
-                className={({ isActive, isPending }) =>
-                  isPending ? "border-b-4" : isActive ? "border-b-4" : ""
-                }
-              >
-                About
-              </NavLink>
-            </li>
-            <li className="inline-block">
-              <NavLink
                 to="/contractors"
                 className={({ isActive, isPending }) =>
                   isPending ? "border-b-4" : isActive ? "border-b-4" : ""
