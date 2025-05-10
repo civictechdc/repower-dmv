@@ -2,7 +2,7 @@ export default function ApplicationConfirmation() {
   return (
     <main className="min-h screen relative m-auto">
       <div className="flex h-screen w-full flex-col items-center justify-center">
-        <div className="flex w-1/2 flex-col items-center justify-center">
+        <div className="flex w-full md:w-1/2 flex-col md:items-center justify-center">
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"

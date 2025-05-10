@@ -88,7 +88,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
           </div> : null}
         </div>
         <div className="flex">
-          <div className="w-[400px] px-4 pb-4">
+          <div className="w-[200px] md:w-[400px] px-4 pb-4">
             <ul>
               {contractor.statesServed.map((item, index) => (
                 <li
@@ -190,7 +190,7 @@ export default function ContractorList() {
       <Heading>{content.heading}</Heading>
       <fetcher.Form id="filter-form" method="post">
         <div className="mt-6 flex flex-wrap gap-y-2 items-center justify-center space-x-4">
-          <h3 className="font-bold">Filter by:</h3>
+          <h3 className="hidden md:inline-block font-bold">Filter by:</h3>
           <Select<Option<string>>
             id="state"
             instanceId="state"

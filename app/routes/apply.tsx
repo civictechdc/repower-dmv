@@ -439,11 +439,11 @@ export default function Application() {
   return (
     <main className="min-h screen relative">
       <div className="flex w-full flex-col items-center justify-center">
-        <div className="flex w-1/2 flex-col items-center justify-center">
-          <div className="flex w-full px-5 py-2 text-4xl font-bold">
+        <div className="flex w-full md:w-1/2 flex-col md:items-center justify-center">
+          <div className="flex w-full md:px-5 py-2 text-4xl font-bold">
             {content.heading}
           </div>
-          <Form method="post" className="flex w-full flex-col p-5">
+          <Form method="post" className="flex w-full flex-col px-0 py-5 md:px-5">
             <ContractorBlock
               errors={actionData?.errors}
               contractor={contractor}

@@ -71,7 +71,7 @@ const PaginationPrevious = ({
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span className="hidden md:inline">Previous</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -86,7 +86,7 @@ const PaginationNext = ({
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
+    <span className="hidden md:inline">Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )
@@ -107,7 +107,7 @@ const PaginationEllipsis = ({
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
-const renderPageNumbers = (currentPage: number, totalPages: number, handlePageChange: Function) => {
+const renderPageNumbers = (currentPage: number, totalPages: number, handlePageChange: (number:number) => void) => {
   const items: ReactNode[] = [];
   const maxVisiblePages = 5;
   if (totalPages <= maxVisiblePages) {
