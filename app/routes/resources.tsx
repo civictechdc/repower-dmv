@@ -29,8 +29,26 @@ export default function Index() {
             Rewiring America Electrification Guide
           </a>
         </li>
-        <li>Efficiency Vermont Energy Guides</li>
-        <li>Energy Star Home Energy Tips</li>
+        <li>
+          <a
+            className="text-blue-500"
+            href="https://www.energystar.gov/about/efficiency-vermont"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Efficiency Vermont Energy Guides
+          </a>
+        </li>
+        <li>
+          <a
+            className="text-blue-500"
+            href="https://www.energystar.gov/saveathome"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Energy Star Home Energy Tips
+          </a>
+        </li>
       </ul>
       <p className="my-4 font-bold">Government Incentives and Rebates:</p>
       <ul className="list-inside list-disc pl-4">
@@ -44,9 +62,36 @@ export default function Index() {
             DC Sustainable Energy Utility (DCSEU) Rebates
           </a>
         </li>
-        <li>Maryland Energy Administration Incentives</li>
-        <li>Virginia Energy Efficiency and Renewable Energy Incentives</li>
-        <li>Federal Incentives for Electrification</li>
+        <li>
+          <a
+            className="text-blue-500"
+            href="https://energy.maryland.gov/pages/all-incentives.aspx"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Maryland Energy Administration Incentives
+          </a>
+        </li>
+        <li>
+          <a
+            className="text-blue-500"
+            href="https://www.deq.virginia.gov/our-programs/pollution-prevention/virginia-information-source-for-energy/programs-and-financial-incentives"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Virginia Energy Efficiency and Renewable Energy Incentives
+          </a>
+        </li>
+        <li>
+          <a
+            className="text-blue-500"
+            href="https://www.energystar.gov/about/federal-tax-credits"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Federal Incentives for Electrification
+          </a>
+        </li>
       </ul>
       <p className="my-4 font-bold">Choosing Contractors and Services:</p>
       <ul className="list-inside list-disc pl-4">
