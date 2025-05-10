@@ -12,12 +12,6 @@ collections:
         file: "app/content/home.json"
         fields:
           - { label: Heading, name: heading, widget: string }
-      - label: "About"
-        name: "about"
-        preview_path: "about"
-        file: "app/content/about.json"
-        fields:
-          - { label: Heading, name: heading, widget: string }
       - label: "Contractor List"
         name: "contractors"
         preview_path: "contractors"

@@ -85,7 +85,7 @@ describe("non-auth workflows", () => {
     cy.get("#certification_1").check();
     cy.get("button[type=\"submit\"]").click();
     cy.location().should((loc) => {
-      expect(loc.pathname).to.eq('/');
+      expect(loc.pathname).to.eq('/applied');
     });
   });
 });
