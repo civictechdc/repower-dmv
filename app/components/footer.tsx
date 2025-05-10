@@ -14,7 +14,7 @@ export default function Footer() {
     <footer className="md:flex justify-between text-center text-white bg-repower-dark-blue p-6">
         <div className="flex items-center justify-center md:justify-normal">
           {socialLinks.map((socialLink) => (
-            <SocialIcon target="_blank" url={socialLink} style={{ height: 40, width: 40 }} bgColor='#253551'/>
+            <SocialIcon key={socialLink} target="_blank" url={socialLink} style={{ height: 40, width: 40 }} bgColor='#253551'/>
           ))}
         </div>
         <a href="https://civictechdc.org" target="_blank" rel="norefferer noreferrer">
