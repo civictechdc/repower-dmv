@@ -1,5 +1,6 @@
 import { Contractor } from "../types";
 export function sortByDistanceFromZip(
+  // @ts-ignore
   contractors: DBContractor[],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   zip: string,
