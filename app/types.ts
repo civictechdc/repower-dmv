@@ -41,7 +41,7 @@ export interface Contractor {
   statesServed: State[];
   services: Service[];
   certifications: Certification[];
-  distance: number | undefined;
+  distance?: number | undefined;
 }
 
 export interface CreateContractorPayload {
@@ -60,9 +60,15 @@ export interface CreateContractorPayload {
   certifications: string[];
 }
 
+export interface ContractorResponse {
+  contractors: Contractor[],
+  totalPages: number,
+  currentPage: number  
+}
+
 export interface ContractorFilters {
   stateServed: string;
   services: string[];
   certifications: string[];
-  zip: string
+  zip: string;
 }

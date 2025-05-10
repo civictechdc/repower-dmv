@@ -7,6 +7,7 @@ import {
   Service,
   State,
   CreateContractorPayload,
+  ContractorFilters
 } from "~/types";
 
 export const getContractorById = async (id: Contractor["id"]) => {
@@ -44,16 +45,12 @@ export async function getContractorByName(name: Contractor["name"]) {
   }
 }
 
-export const getContractors = async (page = 1, pageSize = 10) => {
+export const getContractors = async ({zip, certifications, services, stateServed}:ContractorFilters, page = 1, pageSize = 10) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const filters: any = { isDraft: 0 };
-  const certifications = ["CEA", "HEP"];
-  const services = ["Electrical"];
-  const stateServed = "DC";
-  const zip = "20002";
+  const filterBy: any = { isDraft: 0 };
 
-  if (certifications) {
-    filters["certifications"] = {
+  if (certifications && certifications.length > 0) {
+    filterBy["certifications"] = {
       some: {
         shortName: {
           in: certifications,
@@ -62,8 +59,8 @@ export const getContractors = async (page = 1, pageSize = 10) => {
     };
   }
 
-  if (services) {
-    filters["services"] = {
+  if (services && services.length > 0) {
+    filterBy["services"] = {
       some: {
         name: {
           in: services,
@@ -73,7 +70,7 @@ export const getContractors = async (page = 1, pageSize = 10) => {
   }
 
   if (stateServed) {
-    filters["statesServed"] = {
+    filterBy["statesServed"] = {
       some: {
         name: stateServed,
       },
@@ -83,11 +80,8 @@ export const getContractors = async (page = 1, pageSize = 10) => {
   // Query DB for contractors matching the filters specified
   // todo: ensure indices exist as necessary to ensure optimized searched for any permutation of filters
   let contractors;
-  let totalContractors;
   try {
     contractors = await prisma.contractor.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
       include: {
         certifications: true,
         services: true,
@@ -96,10 +90,8 @@ export const getContractors = async (page = 1, pageSize = 10) => {
       orderBy: {
         name: "asc",
       },
-      where: filters,
+      where: filterBy,
     });
-
-    totalContractors = await prisma.contractor.count();
   } catch (error) {
     console.error("Error fetching contractors:", error);
     throw new Error("Failed to fetch contractors");
@@ -114,6 +106,10 @@ export const getContractors = async (page = 1, pageSize = 10) => {
       throw new Error("Failed to fetch distances from zip");
     }
   }
+
+  const totalContractors = contractors.length;
+  const startPage = (page - 1) * pageSize;
+  contractors = contractors.slice(startPage, startPage + pageSize);
 
   return {
     contractors,

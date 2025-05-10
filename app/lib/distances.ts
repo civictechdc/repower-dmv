@@ -1,6 +1,6 @@
 import { Contractor } from "../types";
 export function sortByDistanceFromZip(
-  contractors: DBContractor[],
+  contractors: Contractor[],
   zip: string,
 ): Promise<Contractor[]> {
   const contractorsWithDistances = contractors.map((contractor) => ({
