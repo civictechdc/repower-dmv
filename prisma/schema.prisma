@@ -41,13 +41,17 @@ model Contractor {
   id               String           @id @default(uuid())
   name             String
   email            String?
-  phone            String
+  phone            String?
   website          String?
   addressLine1     String
   addressLine2     String?
   city             String
   state            String
   zip              String
+  googlePlacesId   String?
+  googleRating     Float?
+  googleNumRatings Int?
+  googleReviewsUrl String?
   isDraft          Int
 
   createdAt DateTime @default(now())
