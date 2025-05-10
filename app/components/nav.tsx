@@ -1,6 +1,8 @@
 import { NavLink } from "@remix-run/react";
 import { useState } from "react";
 
+const CONTACT_EMAIL = "team@civictechdc.org";
+
 function Navbar() {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
 
@@ -8,9 +10,26 @@ function Navbar() {
     setIsMobileMenuToggled(!isMobileMenuToggled);
   };
 
+  const NotificationBanner = () => {
+    return (
+      <div className="bg-zinc-700 py-2">
+        <div className="text-center font-semibold">
+          This website is currently in beta and you may encounter issues while
+          using it. Please submit feedback to{" "}
+          <a
+            className="text-sky-500 underline"
+            href={`mailto:${CONTACT_EMAIL}`}
+          >
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+      </div>
+    );
+  };
   return (
-    <nav className="fixed left-0 right-0 top-0 z-50 bg-repower-dark-blue px-6 py-4 text-white">
-      <div className="flex flex-wrap items-center justify-items-center md:flex-nowrap">
+    <nav className="fixed left-0 right-0 top-0 z-50 bg-repower-dark-blue text-white">
+      <NotificationBanner />
+      <div className="flex flex-wrap items-center justify-items-center px-6 py-4 md:flex-nowrap">
         <NavLink to="/">
           <img
             src="img/electrifydmvwhitehorizontal.png"
@@ -36,16 +55,6 @@ function Navbar() {
           role="presentation"
         >
           <ul className="flex flex-col items-center justify-end gap-x-8 gap-y-4 text-nowrap text-center text-lg md:flex-row [&>li:hover]:text-gray-300 [&>li]:inline-block">
-            <li className="inline-block">
-              <NavLink
-                to="/about"
-                className={({ isActive, isPending }) =>
-                  isPending ? "border-b-4" : isActive ? "border-b-4" : ""
-                }
-              >
-                About
-              </NavLink>
-            </li>
             <li className="inline-block">
               <NavLink
                 to="/contractors"
