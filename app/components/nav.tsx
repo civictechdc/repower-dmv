@@ -1,7 +1,7 @@
 import { NavLink } from "@remix-run/react";
 import { useState } from "react";
 
-const CONTACT_EMAIL: string = "team@civictechdc.org";
+const CONTACT_EMAIL = "team@civictechdc.org";
 
 function Navbar() {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
