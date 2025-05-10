@@ -1,6 +1,6 @@
 import { Contractor } from "../types";
 export function sortByDistanceFromZip(
-  // @ts-expect-error
+  // @ts-expect-error I do not know how to fix this
   contractors: DBContractor[],
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   zip: string,
