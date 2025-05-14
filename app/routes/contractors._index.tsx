@@ -122,25 +122,25 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             </ul>
           </div>
           <div className="flex grow flex-col items-end px-4 pb-4 text-sm">
-            <a
+            {contractor.website && <a
               href={contractor.website}
               target="_blank"
               rel="noreferrer"
               className="inline-block text-sm underline hover:text-blue-500"
             >
               Website
-            </a>
-            <a
+            </a>}
+            {contractor.email && <a
               href={`mailto:${contractor.email}`}
               rel="noreferrer"
               className="inline-block text-sm underline hover:text-blue-500"
             >
               Email
-            </a>
-            <PhoneLink phoneNumber={contractor.phone} />
+            </a>}
+            {contractor.phone && <PhoneLink phoneNumber={contractor.phone} />}
             <p>{`${contractor.city}, ${contractor.state}`}</p>
             <div className="mt-auto flex pt-2">
-              <Ratings rating={4.4} title="4.4" />
+              {contractor.googleRating && <Ratings rating={contractor.googleRating} title="{contractor.googleRating} stars" />}
             </div>
           </div>
         </div>
