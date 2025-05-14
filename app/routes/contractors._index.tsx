@@ -138,7 +138,7 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               Email
             </a>}
             {contractor.phone && <PhoneLink phoneNumber={contractor.phone} />}
-            <p>{`${contractor.city}, ${contractor.state}`}</p>
+            {contractor.city && contractor.state && <p>{`${contractor.city}, ${contractor.state}`}</p>}
             <div className="mt-auto flex pt-2">
               {contractor.googleRating && <Ratings rating={contractor.googleRating} title="{contractor.googleRating} stars" />}
             </div>
