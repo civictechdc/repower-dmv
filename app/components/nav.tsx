@@ -34,7 +34,7 @@ function Navbar() {
           <img
             src="img/electrifydmvwhitehorizontal.png"
             alt="Electrify DMV logo"
-            className="inline-block h-fit w-[250px] grow md:mr-10 md:w-[300px] md:grow-0 lg:w-[350px]"
+            className="inline-block w-[250px] grow md:mr-10 md:w-[300px] md:grow-0 lg:w-[350px]"
           />
         </NavLink>
         <div className="min-w-4 grow"></div>
