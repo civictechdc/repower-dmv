@@ -434,6 +434,7 @@ export default function Application() {
     statesServed: [],
     services: [],
     certifications: [],
+    googleRating: undefined,
   });
 
   return (

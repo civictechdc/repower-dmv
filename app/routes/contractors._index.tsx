@@ -1,4 +1,4 @@
-import type { MetaFunction, ActionFunctionArgs  } from "@remix-run/node";
+import type { MetaFunction, ActionFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useFetcher } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import Select from "react-select";
@@ -11,14 +11,22 @@ import {
   PaginationNext,
   PaginationPrevious,
   renderPageNumbers,
-} from "~/components/ui/pagination"
+} from "~/components/ui/pagination";
 import { getContractors } from "~/models/contractor.server";
 
-
 import content from "../content/contractors.json";
-import { STATES, SERVICES, CERTIFICATIONS, Contractor, ContractorFilters, ContractorResponse } from "../types";
+import {
+  STATES,
+  SERVICES,
+  CERTIFICATIONS,
+  Contractor,
+  ContractorFilters,
+  ContractorResponse,
+} from "../types";
 
-export async function action({ request }: ActionFunctionArgs) : Promise<ContractorResponse> {
+export async function action({
+  request,
+}: ActionFunctionArgs): Promise<ContractorResponse> {
   const body = await request.formData();
   const services: string[] = [];
   const certifications: string[] = [];
@@ -27,23 +35,23 @@ export async function action({ request }: ActionFunctionArgs) : Promise<Contract
     if (!pair[1]) continue;
     if (pair[0] == "services") {
       services.push(pair[1].toString());
-    } 
+    }
     if (pair[0] == "certifications") {
       certifications.push(pair[1].toString());
-    } 
+    }
   }
 
   let zip = body.get("zip")?.toString();
   if (!zip || zip.length != 5) {
     zip = "";
   }
-  
-  const filters : ContractorFilters = {
-    "zip": zip,
-    "stateServed": body.get("state")?.toString() ?? "",
-    "services": services,
-    "certifications": certifications
-  }
+
+  const filters: ContractorFilters = {
+    zip: zip,
+    stateServed: body.get("state")?.toString() ?? "",
+    services: services,
+    certifications: certifications,
+  };
 
   const pageNumber = Number(body.get("page-number")?.toString()) ?? 1;
 
@@ -51,7 +59,7 @@ export async function action({ request }: ActionFunctionArgs) : Promise<Contract
   return data as ContractorResponse;
 }
 
-export async function loader() : Promise<ContractorResponse> {
+export async function loader(): Promise<ContractorResponse> {
   const data = await getContractors({} as ContractorFilters);
   return data as ContractorResponse;
 }
@@ -79,16 +87,16 @@ const ContractorBlock = (props: ContractorBlockProps) => {
   return (
     <li key={contractor.name} className="flex justify-center">
       <div className="relative w-full max-w-3xl items-start overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md">
-        <div className="flex justify-between px-4 py-2 ">
-          <h2 className="text-xl font-bold">
-            {contractor.name}
-          </h2>
-          {contractor.distance ? <div className="align-center">
-            Distance: {contractor.distance} mi
-          </div> : null}
+        <div className="flex justify-between px-4 py-2">
+          <h2 className="text-xl font-bold">{contractor.name}</h2>
+          {contractor.distance ? (
+            <div className="align-center">
+              Distance: {contractor.distance} mi
+            </div>
+          ) : null}
         </div>
         <div className="flex">
-          <div className="w-[200px] md:w-[400px] px-4 pb-4">
+          <div className="w-[200px] px-4 pb-4 md:w-[400px]">
             <ul>
               {contractor.statesServed.map((item, index) => (
                 <li
@@ -122,25 +130,36 @@ const ContractorBlock = (props: ContractorBlockProps) => {
             </ul>
           </div>
           <div className="flex grow flex-col items-end px-4 pb-4 text-sm">
-            <a
-              href={contractor.website}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-block text-sm underline hover:text-blue-500"
-            >
-              Website
-            </a>
-            <a
-              href={`mailto:${contractor.email}`}
-              rel="noreferrer"
-              className="inline-block text-sm underline hover:text-blue-500"
-            >
-              Email
-            </a>
-            <PhoneLink phoneNumber={contractor.phone} />
+            {contractor.website ? (
+              <a
+                href={contractor.website}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-block text-sm underline hover:text-blue-500"
+              >
+                Website
+              </a>
+            ) : null}
+            {contractor.email ? (
+              <a
+                href={`mailto:${contractor.email}`}
+                rel="noreferrer"
+                className="inline-block text-sm underline hover:text-blue-500"
+              >
+                Email
+              </a>
+            ) : null}
+            {contractor.phone ? (
+              <PhoneLink phoneNumber={contractor.phone} />
+            ) : null}
             <p>{`${contractor.city}, ${contractor.state}`}</p>
             <div className="mt-auto flex pt-2">
-              <Ratings rating={4.4} title="4.4" />
+              {contractor.googleRating ? (
+                <Ratings
+                  rating={contractor.googleRating}
+                  title="{contractor.googleRating} stars"
+                />
+              ) : null}
             </div>
           </div>
         </div>
@@ -152,13 +171,14 @@ const ContractorBlock = (props: ContractorBlockProps) => {
 export default function ContractorList() {
   const initialData = useLoaderData<typeof loader>();
   const initialContractors = initialData.contractors as Contractor[];
-  const [filteredContractors, setFilteredContractors] = useState(initialContractors);
+  const [filteredContractors, setFilteredContractors] =
+    useState(initialContractors);
   const [currentPage, setCurrentPage] = useState(initialData.currentPage);
   const [totalPages, setTotalPages] = useState(initialData.totalPages);
 
   const fetcher = useFetcher<ContractorResponse>();
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     if (fetcher.data) {
       const data = fetcher.data;
       setFilteredContractors(data.contractors);
@@ -174,23 +194,21 @@ export default function ContractorList() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    (document.getElementById("page-number") as HTMLInputElement).value = page.toString();
+    (document.getElementById("page-number") as HTMLInputElement).value =
+      page.toString();
     const form = document.getElementById("filter-form") as HTMLFormElement;
 
-    fetcher.submit(
-      form,
-      {
-        method: "POST",
-      }
-    );
+    fetcher.submit(form, {
+      method: "POST",
+    });
   };
 
   return (
     <div>
       <Heading>{content.heading}</Heading>
       <fetcher.Form id="filter-form" method="post">
-        <div className="mt-6 flex flex-wrap gap-y-2 items-center justify-center space-x-4">
-          <h3 className="hidden md:inline-block font-bold">Filter by:</h3>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-y-2 space-x-4">
+          <h3 className="hidden font-bold md:inline-block">Filter by:</h3>
           <Select<Option<string>>
             id="state"
             instanceId="state"
@@ -234,15 +252,25 @@ export default function ContractorList() {
             }))}
           />
           <input
-            className="border-2 w-24 rounded-sm p-[6px]"
+            className="w-24 rounded-sm border-2 p-[6px]"
             type="text"
             id="zip"
             name="zip"
             placeholder="Zip Code"
             maxLength={5}
           />
-          <input type="hidden" id="page-number" name="page-number" value="1"></input>
-          <button className="px-4 py-2 bg-gray-200 rounded-sm hover:bg-gray-300" type="submit">Search</button>
+          <input
+            type="hidden"
+            id="page-number"
+            name="page-number"
+            value="1"
+          ></input>
+          <button
+            className="rounded-sm bg-gray-200 px-4 py-2 hover:bg-gray-300"
+            type="submit"
+          >
+            Search
+          </button>
         </div>
       </fetcher.Form>
       <ul className="mt-6 space-y-4">
@@ -252,9 +280,19 @@ export default function ContractorList() {
       </ul>
       <Pagination className="mt-4">
         <PaginationContent>
-          <PaginationPrevious onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous</PaginationPrevious>
+          <PaginationPrevious
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </PaginationPrevious>
           {renderPageNumbers(currentPage, totalPages, handlePageChange)}
-          <PaginationNext onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Next</PaginationNext>
+          <PaginationNext
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </PaginationNext>
         </PaginationContent>
       </Pagination>
     </div>
