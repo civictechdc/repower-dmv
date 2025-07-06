@@ -72,4 +72,5 @@ export interface ContractorFilters {
   services: string[];
   certifications: string[];
   zip: string;
+  status?: string[];
 }
