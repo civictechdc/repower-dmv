@@ -1,4 +1,4 @@
-import { Contractor } from "@prisma/client";
+import { Contractor, ContractorStatus } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 import { sortByDistanceFromZip } from "~/lib/distances";
@@ -45,9 +45,15 @@ export async function getContractorByName(name: Contractor["name"]) {
   }
 }
 
-export const getContractors = async ({zip, certifications, services, stateServed}:ContractorFilters, page = 1, pageSize = 10) => {
+export const getContractors = async ({zip, certifications, services, stateServed, status}:ContractorFilters, page = 1, pageSize = 10) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const filterBy: any = { isDraft: 0 };
+  const filterBy: any = {};
+  
+  if (status && status.length > 0) {
+    filterBy.status = { in: status };
+  } else {
+    filterBy.status = ContractorStatus.APPROVED;
+  }
 
   if (certifications && certifications.length > 0) {
     filterBy["certifications"] = {
@@ -155,7 +161,7 @@ export async function createContractor(contractor: CreateContractorPayload) {
         certifications: {
           connect: certifications,
         },
-        isDraft: 1,
+        status: ContractorStatus.DRAFT,
       },
     });
   } catch (error) {
