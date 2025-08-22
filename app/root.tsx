@@ -8,11 +8,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "@remix-run/react";
 
 import { getUser } from "~/session.server";
 import stylesheet from "~/tailwind.css";
-
+import Navbar from "~/components/nav";
+import Footer from "~/components/footer";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -25,7 +27,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  return (
+  const { search } = useLocation();
+  const params = new URLSearchParams(search);
+  const hideNav = ["true", "1"].includes((params.get("hideNav") || "").toLowerCase());  return (
     <html lang="en" className="h-full">
       <head>
         <meta charSet="utf-8" />
@@ -34,9 +38,18 @@ export default function App() {
         <Links />
       </head>
       <body className="h-full">
-        <main className="relative min-h-screen bg-white p-4 md:p-8">
-          <Outlet />
-        </main>
+        {!hideNav ?
+          <>
+            <Navbar />
+            <main className="relative min-h-screen bg-white p-4 md:p-8 mt-[160px] md:mt-[144px]">
+              <Outlet />
+            </main>
+            <Footer />
+          </> : <>
+            <main className="relative min-h-screen bg-white p-4 md:p-8">
+              <Outlet />
+            </main>
+          </>}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
