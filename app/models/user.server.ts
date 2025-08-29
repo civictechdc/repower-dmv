@@ -9,6 +9,31 @@ export async function getUserById(id: User["id"]) {
   return prisma.user.findUnique({ where: { id } });
 }
 
+export async function getUserWithRoles(id: User["id"]) {
+  return prisma.user.findUnique({
+    where: { id },
+    include: {
+      roles: {
+        include: {
+          role: true,
+        },
+      },
+    },
+  });
+}
+
+export async function hasRole(userId: User["id"], roleName: string) {
+  const userRole = await prisma.userRole.findFirst({
+    where: {
+      userId,
+      role: {
+        name: roleName,
+      },
+    },
+  });
+  return !!userRole;
+}
+
 export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }

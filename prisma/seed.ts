@@ -162,7 +162,7 @@ async function seed() {
               max: 3,
             }),
           },
-          isDraft: 0
+          status: 'APPROVED'
         },
       }),
     );

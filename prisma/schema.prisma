@@ -7,6 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum ContractorStatus {
+  DRAFT
+  APPROVED
+  REJECTED
+}
+
 model User {
   id    String @id @default(cuid())
   email String @unique
@@ -16,6 +22,7 @@ model User {
 
   password Password?
   notes    Note[]
+  roles    UserRole[]
 }
 
 model Password {
@@ -52,7 +59,7 @@ model Contractor {
   googleRating     Float?
   googleNumRatings Int?
   googleReviewsUrl String?
-  isDraft          Int
+  status           ContractorStatus @default(DRAFT)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -99,4 +106,28 @@ model State {
   contractors      Contractor[]
   
   @@unique(name)
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users UserRole[]
+}
+
+model UserRole {
+  id     Int    @id @default(autoincrement())
+  userId String
+  roleId Int
+
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
 }
