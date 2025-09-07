@@ -3,7 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
 import { listAllContractorsForAdmin, setContractorDraftStatus } from "~/models/contractor.server";
-import { requireUser } from "~/session.server";
+import { requireAdmin } from "~/session.server";
 
 type AdminContractorItem = {
   id: string;
@@ -15,7 +15,7 @@ type AdminContractorItem = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await requireUser(request);
+  await requireAdmin(request);
   const all = await listAllContractorsForAdmin();
   const contractors: AdminContractorItem[] = all.map((c) => ({
     id: c.id,
@@ -29,7 +29,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  await requireUser(request);
+  await requireAdmin(request);
   const form = await request.formData();
   const id = form.get("id")?.toString();
   const next = form.get("next")?.toString() ?? "/admin/contractors";
