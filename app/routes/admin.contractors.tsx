@@ -36,13 +36,16 @@ export async function action({ request }: ActionFunctionArgs) {
   const enable = form.get("enable")?.toString();
   const intent = form.get("intent")?.toString();
 
-  if (!id || typeof enable === "undefined") {
-    return json({ error: "Missing parameters" }, { status: 400 });
-  }
-
   if (intent === "delete") {
+    if (!id) {
+      return json({ error: "Missing id" }, { status: 400 });
+    }
     await deleteContractorById(id);
     return redirect(next);
+  }
+
+  if (!id || typeof enable === "undefined") {
+    return json({ error: "Missing parameters" }, { status: 400 });
   }
 
   const isDraft = enable === "true" ? 0 : 1;
