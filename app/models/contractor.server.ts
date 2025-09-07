@@ -257,3 +257,22 @@ export async function lookupByNameAndZipAndSetPlaceId(
   if (!match) return prisma.contractor.findUnique({ where: { id } });
   return updateContractorPlaceId(id, match.place_id);
 }
+
+export async function bulkRefreshAllContractorsGoogle() {
+  const contractors = await prisma.contractor.findMany({ select: { id: true, name: true, addressLine1: true, city: true, state: true, googlePlacesId: true } });
+  for (const c of contractors) {
+    try {
+      if (c.googlePlacesId) {
+        await refreshContractorGoogleData(c.id);
+      } else {
+        const query = `${c.name} ${c.addressLine1 ?? ""} ${c.city ?? ""} ${c.state ?? ""}`;
+        const match = await textSearchPlace(query);
+        if (match?.place_id) {
+          await updateContractorPlaceId(c.id, match.place_id);
+        }
+      }
+    } catch (e) {
+      console.warn("Bulk refresh error for", c.id, e);
+    }
+  }
+}

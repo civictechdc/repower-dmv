@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { listAllContractorsForAdmin, setContractorDraftStatus, deleteContractorById, updateContractorPlaceId, lookupAndSetContractorPlaceId, refreshContractorGoogleData, lookupByNameAndZipAndSetPlaceId } from "~/models/contractor.server";
+import { listAllContractorsForAdmin, setContractorDraftStatus, deleteContractorById, updateContractorPlaceId, lookupAndSetContractorPlaceId, refreshContractorGoogleData, lookupByNameAndZipAndSetPlaceId, bulkRefreshAllContractorsGoogle } from "~/models/contractor.server";
 import { requireAdmin } from "~/session.server";
 
 type AdminContractorItem = {
@@ -72,6 +72,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return redirect(next);
   }
 
+  if (intent === "bulk-refresh-google") {
+    await bulkRefreshAllContractorsGoogle();
+    return redirect(next);
+  }
+
   if (intent === "lookup-name-zip") {
     if (!id) return json({ error: "Missing id" }, { status: 400 });
     const name = form.get("name")?.toString() || "";
@@ -96,6 +101,13 @@ export default function AdminContractors() {
     <div className="mx-auto max-w-5xl">
       <h1 className="mb-4 text-2xl font-bold">Contractors Admin</h1>
       <p className="mb-6 text-sm text-gray-600">Toggle visibility of contractor listings. Visible entries have draft status = 0.</p>
+      <div className="mb-3 flex items-center justify-between">
+        <div></div>
+        <Form method="post" replace>
+          <input type="hidden" name="intent" value="bulk-refresh-google" />
+          <button className="rounded bg-purple-700 px-3 py-1 text-sm text-white hover:bg-purple-800">Bulk Update Google Data</button>
+        </Form>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
