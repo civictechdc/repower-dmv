@@ -194,3 +194,12 @@ export const setContractorDraftStatus = async (
     throw new Error("Failed to update contractor draft status");
   }
 };
+
+export const deleteContractorById = async (id: Contractor["id"]) => {
+  try {
+    return await prisma.contractor.delete({ where: { id } });
+  } catch (error) {
+    console.error(`Error deleting contractor ${id}:`, error);
+    throw new Error("Failed to delete contractor");
+  }
+};

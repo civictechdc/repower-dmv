@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { listAllContractorsForAdmin, setContractorDraftStatus } from "~/models/contractor.server";
+import { listAllContractorsForAdmin, setContractorDraftStatus, deleteContractorById } from "~/models/contractor.server";
 import { requireAdmin } from "~/session.server";
 
 type AdminContractorItem = {
@@ -34,9 +34,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const id = form.get("id")?.toString();
   const next = form.get("next")?.toString() ?? "/admin/contractors";
   const enable = form.get("enable")?.toString();
+  const intent = form.get("intent")?.toString();
 
   if (!id || typeof enable === "undefined") {
     return json({ error: "Missing parameters" }, { status: 400 });
+  }
+
+  if (intent === "delete") {
+    await deleteContractorById(id);
+    return redirect(next);
   }
 
   const isDraft = enable === "true" ? 0 : 1;
@@ -58,11 +64,11 @@ export default function AdminContractors() {
               <th className="px-4 py-3">City/State</th>
               <th className="px-4 py-3">Website</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Action</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {contractors.map((c) => {
+            {contractors.map((c: AdminContractorItem) => {
               const isVisible = c.isDraft === 0;
               return (
                 <tr key={c.id}>
@@ -70,12 +76,19 @@ export default function AdminContractors() {
                   <td className="px-4 py-3">{c.city}, {c.state}</td>
                   <td className="px-4 py-3">{c.website ? <a href={c.website} target="_blank" rel="noreferrer" className="underline">Website</a> : "-"}</td>
                   <td className="px-4 py-3">{isVisible ? "Enabled" : "Disabled"}</td>
-                  <td className="px-4 py-3">
-                    <Form method="post" replace>
+                  <td className="px-4 py-3 space-x-2">
+                    <Form method="post" replace className="inline">
                       <input type="hidden" name="id" value={c.id} />
                       <input type="hidden" name="enable" value={(!isVisible).toString()} />
                       <button className={`rounded px-3 py-1 text-sm ${isVisible ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-600 hover:bg-green-700"}`}>
                         {isVisible ? "Disable" : "Enable"}
+                      </button>
+                    </Form>
+                    <Form method="post" replace className="inline" onSubmit={(e: React.FormEvent<HTMLFormElement>) => { if (!confirm("Delete this contractor?")) { e.preventDefault(); } }}>
+                      <input type="hidden" name="id" value={c.id} />
+                      <input type="hidden" name="intent" value="delete" />
+                      <button className="rounded bg-red-600 px-3 py-1 text-sm hover:bg-red-700">
+                        Delete
                       </button>
                     </Form>
                   </td>
