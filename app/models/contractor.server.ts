@@ -163,3 +163,34 @@ export async function createContractor(contractor: CreateContractorPayload) {
     throw new Error("Could not create contractor listing");
   }
 }
+
+export const listAllContractorsForAdmin = async () => {
+  try {
+    return await prisma.contractor.findMany({
+      include: {
+        certifications: true,
+        services: true,
+        statesServed: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Error listing contractors for admin:", error);
+    throw new Error("Failed to list contractors for admin");
+  }
+};
+
+export const setContractorDraftStatus = async (
+  id: Contractor["id"],
+  isDraft: number,
+) => {
+  try {
+    return await prisma.contractor.update({
+      where: { id },
+      data: { isDraft },
+    });
+  } catch (error) {
+    console.error(`Error updating contractor draft status for ${id}:`, error);
+    throw new Error("Failed to update contractor draft status");
+  }
+};
