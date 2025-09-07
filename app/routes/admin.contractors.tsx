@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 
-import { listAllContractorsForAdmin, setContractorDraftStatus, deleteContractorById, updateContractorPlaceId, lookupAndSetContractorPlaceId, refreshContractorGoogleData } from "~/models/contractor.server";
+import { listAllContractorsForAdmin, setContractorDraftStatus, deleteContractorById, updateContractorPlaceId, lookupAndSetContractorPlaceId, refreshContractorGoogleData, lookupByNameAndZipAndSetPlaceId } from "~/models/contractor.server";
 import { requireAdmin } from "~/session.server";
 
 type AdminContractorItem = {
@@ -15,12 +15,13 @@ type AdminContractorItem = {
   googlePlacesId: string | null;
   googleRating: number | null;
   googleNumRatings: number | null;
+  zip: string | null;
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
   await requireAdmin(request);
   const all = await listAllContractorsForAdmin();
-  const contractors: AdminContractorItem[] = all.map((c) => ({
+  const contractors: AdminContractorItem[] = all.map((c: any) => ({
     id: c.id,
     name: c.name,
     city: c.city,
@@ -30,6 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     googlePlacesId: (c as any).googlePlacesId ?? null,
     googleRating: (c as any).googleRating ?? null,
     googleNumRatings: (c as any).googleNumRatings ?? null,
+    zip: (c as any).zip ?? null,
   }));
   return json({ contractors });
 }
@@ -67,6 +69,15 @@ export async function action({ request }: ActionFunctionArgs) {
   if (intent === "refresh-google") {
     if (!id) return json({ error: "Missing id" }, { status: 400 });
     await refreshContractorGoogleData(id);
+    return redirect(next);
+  }
+
+  if (intent === "lookup-name-zip") {
+    if (!id) return json({ error: "Missing id" }, { status: 400 });
+    const name = form.get("name")?.toString() || "";
+    const zip = form.get("zip")?.toString() || "";
+    if (!name || !zip) return json({ error: "Missing name or zip" }, { status: 400 });
+    await lookupByNameAndZipAndSetPlaceId(id, name, zip);
     return redirect(next);
   }
 
@@ -120,6 +131,13 @@ export default function AdminContractors() {
                           <input type="hidden" name="id" value={c.id} />
                           <input type="hidden" name="intent" value="refresh-google" />
                           <button className="rounded bg-indigo-600 px-3 py-1 text-sm text-white hover:bg-indigo-700">Refetch</button>
+                        </Form>
+                        <Form method="post" replace className="inline-flex gap-1">
+                          <input type="hidden" name="id" value={c.id} />
+                          <input type="hidden" name="intent" value="lookup-name-zip" />
+                          <input name="name" defaultValue={c.name} placeholder="name" className="w-32 rounded border p-1 text-sm" />
+                          <input name="zip" defaultValue={c.zip ?? ""} placeholder="zip" className="w-20 rounded border p-1 text-sm" />
+                          <button className="rounded bg-slate-500 px-2 py-1 text-sm text-white hover:bg-slate-600">Lookup by zip</button>
                         </Form>
                       </div>
                       <Form method="post" replace className="flex gap-2">

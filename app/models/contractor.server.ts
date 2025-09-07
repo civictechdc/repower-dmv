@@ -246,3 +246,14 @@ export async function refreshContractorGoogleData(id: Contractor["id"]) {
     },
   });
 }
+
+export async function lookupByNameAndZipAndSetPlaceId(
+  id: Contractor["id"],
+  name: string,
+  zip: string,
+) {
+  const query = `${name} ${zip}`;
+  const match = await textSearchPlace(query);
+  if (!match) return prisma.contractor.findUnique({ where: { id } });
+  return updateContractorPlaceId(id, match.place_id);
+}
