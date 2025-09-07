@@ -2,6 +2,7 @@ import { Contractor } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 import { sortByDistanceFromZip } from "~/lib/distances";
+import { getPlaceDetails, textSearchPlace, buildGoogleReviewsUrl } from "~/lib/googlePlaces.server";
 import {
   Certification,
   Service,
@@ -203,3 +204,45 @@ export const deleteContractorById = async (id: Contractor["id"]) => {
     throw new Error("Failed to delete contractor");
   }
 };
+
+export async function updateContractorPlaceId(
+  id: Contractor["id"],
+  placeId: string,
+) {
+  const details = await getPlaceDetails(placeId);
+  return prisma.contractor.update({
+    where: { id },
+    data: {
+      googlePlacesId: placeId,
+      googleRating: details?.rating ?? null,
+      googleNumRatings: details?.user_ratings_total ?? null,
+      googleReviewsUrl: details?.place_id ? buildGoogleReviewsUrl(details.place_id) : null,
+      website: details?.website ?? undefined,
+    },
+  });
+}
+
+export async function lookupAndSetContractorPlaceId(id: Contractor["id"]) {
+  const contractor = await prisma.contractor.findUnique({ where: { id } });
+  if (!contractor) throw new Error("Contractor not found");
+  const query = `${contractor.name} ${contractor.addressLine1} ${contractor.city} ${contractor.state}`;
+  const match = await textSearchPlace(query);
+  if (!match) return contractor;
+  return updateContractorPlaceId(id, match.place_id);
+}
+
+export async function refreshContractorGoogleData(id: Contractor["id"]) {
+  const contractor = await prisma.contractor.findUnique({ where: { id } });
+  if (!contractor) throw new Error("Contractor not found");
+  if (!contractor.googlePlacesId) throw new Error("No place_id set");
+  const details = await getPlaceDetails(contractor.googlePlacesId);
+  return prisma.contractor.update({
+    where: { id },
+    data: {
+      googleRating: details?.rating ?? null,
+      googleNumRatings: details?.user_ratings_total ?? null,
+      googleReviewsUrl: details?.place_id ? buildGoogleReviewsUrl(details.place_id) : contractor.googleReviewsUrl,
+      website: details?.website ?? undefined,
+    },
+  });
+}
