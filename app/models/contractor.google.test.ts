@@ -14,7 +14,7 @@ describe("contractor google integration", () => {
         city: "Washington",
         state: "DC",
         zip: "20001",
-        isDraft: 1,
+        isDraft: true,
       },
     });
     contractorId = c.id;

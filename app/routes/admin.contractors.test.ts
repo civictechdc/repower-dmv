@@ -15,17 +15,17 @@ describe("admin contractors model helpers", () => {
         city: "DC",
         state: "DC",
         zip: "20001",
-        isDraft: 1,
+        isDraft: true,
       },
     });
     contractorId = c.id;
   });
 
   it("toggles draft status", async () => {
-    const updated = await setContractorDraftStatus(contractorId, 0);
-    expect(updated.isDraft).toBe(0);
-    const updatedBack = await setContractorDraftStatus(contractorId, 1);
-    expect(updatedBack.isDraft).toBe(1);
+    const updated = await setContractorDraftStatus(contractorId, false);
+    expect(updated.isDraft).toBe(false);
+    const updatedBack = await setContractorDraftStatus(contractorId, true);
+    expect(updatedBack.isDraft).toBe(true);
   });
 
   it("deletes contractor", async () => {

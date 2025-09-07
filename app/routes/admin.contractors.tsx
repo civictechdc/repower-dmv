@@ -11,7 +11,7 @@ type AdminContractorItem = {
   city: string;
   state: string;
   website: string | null;
-  isDraft: number;
+  isDraft: boolean;
   googlePlacesId: string | null;
   googleRating: number | null;
   googleNumRatings: number | null;
@@ -27,7 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     city: c.city,
     state: c.state,
     website: c.website,
-    isDraft: c.isDraft,
+    isDraft: Boolean(c.isDraft),
     googlePlacesId: (c as any).googlePlacesId ?? null,
     googleRating: (c as any).googleRating ?? null,
     googleNumRatings: (c as any).googleNumRatings ?? null,
@@ -90,7 +90,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: "Missing parameters" }, { status: 400 });
   }
 
-  const isDraft = enable === "true" ? 0 : 1;
+  const isDraft = enable === "true" ? false : true;
   await setContractorDraftStatus(id, isDraft);
   return redirect(next);
 }
@@ -122,7 +122,7 @@ export default function AdminContractors() {
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {contractors.map((c: AdminContractorItem) => {
-              const isVisible = c.isDraft === 0;
+              const isVisible = c.isDraft === false || c.isDraft === true ? !c.isDraft : Boolean(!c.isDraft);
               return (
                 <tr key={c.id}>
                   <td className="px-4 py-3">{c.name}</td>

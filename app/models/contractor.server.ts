@@ -48,7 +48,7 @@ export async function getContractorByName(name: Contractor["name"]) {
 
 export const getContractors = async ({zip, certifications, services, stateServed}:ContractorFilters, page = 1, pageSize = 10) => {
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const filterBy: any = { isDraft: 0 };
+  const filterBy: any = { isDraft: false };
 
   if (certifications && certifications.length > 0) {
     filterBy["certifications"] = {
@@ -156,7 +156,7 @@ export async function createContractor(contractor: CreateContractorPayload) {
         certifications: {
           connect: certifications,
         },
-        isDraft: 1,
+        isDraft: true,
       },
     });
   } catch (error) {
@@ -183,7 +183,7 @@ export const listAllContractorsForAdmin = async () => {
 
 export const setContractorDraftStatus = async (
   id: Contractor["id"],
-  isDraft: number,
+  isDraft: boolean,
 ) => {
   try {
     return await prisma.contractor.update({

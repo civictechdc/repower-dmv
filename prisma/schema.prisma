@@ -48,11 +48,11 @@ model Contractor {
   city             String
   state            String
   zip              String
-  googlePlacesId   String?
+  googlePlacesId   String?          @unique
   googleRating     Float?
   googleNumRatings Int?
   googleReviewsUrl String?
-  isDraft          Int
+  isDraft          Boolean          @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,12 +60,16 @@ model Contractor {
   certifications   Certification[]
   services         Service[]
   statesServed     State[]
+
+  @@index([isDraft, name])
+  @@index([state, city])
+  @@index([name])
 }
 
 model Certification {
   id              Int        @id @default(autoincrement())
   name String
-  shortName String
+  shortName String @unique
   description String
 
   createdAt DateTime @default(now())
