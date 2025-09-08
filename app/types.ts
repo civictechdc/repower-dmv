@@ -43,6 +43,8 @@ export interface Contractor {
   certifications: Certification[];
   distance?: number | undefined;
   googleRating?: number | undefined;
+  googleNumRatings?: number | undefined;
+  googleReviewsUrl?: string | undefined;
 }
 
 export interface CreateContractorPayload {

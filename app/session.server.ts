@@ -63,6 +63,17 @@ export async function requireUser(request: Request) {
   throw await logout(request);
 }
 
+export async function requireAdmin(request: Request) {
+  const user = await requireUser(request);
+  const allow = (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  if (allow.length === 0) return user; // minimal: if unset, allow any logged-in user
+  if (user.email && allow.includes(user.email.toLowerCase())) return user;
+  throw redirect("/");
+}
+
 export async function createUserSession({
   request,
   userId,

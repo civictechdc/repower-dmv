@@ -4,6 +4,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "build": "remix build",
     "db:console": "sqlite3 prisma/data.db",
     "db:create-migration": "prisma migrate dev",
@@ -48,9 +50,11 @@
     "react-social-icons": "^6.24.0",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
-    "tiny-invariant": "^1.3.3"
+    "tiny-invariant": "^1.3.3",
+    "zipcodes": "^8.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@remix-run/dev": "^2.16.4",
     "@testing-library/cypress": "^10.0.3",
     "@testing-library/jest-dom": "^6.6.3",
