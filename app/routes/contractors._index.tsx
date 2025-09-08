@@ -146,12 +146,15 @@ const ContractorBlock = (props: ContractorBlockProps) => {
               <PhoneLink phoneNumber={contractor.phone} />
             ) : null}
             <p>{`${contractor.city}, ${contractor.state}`}</p>
-            <div className="mt-auto flex pt-2">
-              {contractor.googleRating ? (
-                <Ratings
-                  rating={contractor.googleRating}
-                  title="{contractor.googleRating} stars"
-                />
+            <div className="mt-auto flex items-center gap-2 pt-2">
+              {typeof contractor.googleRating === "number" ? (
+                <>
+                  <Ratings rating={contractor.googleRating} title={`${contractor.googleRating} stars`} />
+                  <span className="text-xs text-gray-600">{contractor.googleRating.toFixed(1)} {contractor.googleNumRatings ? `(${contractor.googleNumRatings})` : ""}</span>
+                  {contractor.googleReviewsUrl ? (
+                    <a href={contractor.googleReviewsUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">Google reviews</a>
+                  ) : null}
+                </>
               ) : null}
             </div>
           </div>
