@@ -101,7 +101,7 @@ export const getContractors = async ({zip, certifications, services, stateServed
   // If there's a zip filter then go fetch distances and sort by distance
   if (zip) {
     try {
-      contractors = await sortByDistanceFromZip(contractors, zip);
+      contractors = await sortByDistanceFromZip(contractors, zip) as typeof contractors;
     } catch (error) {
       console.log("Error fetching distances from zip: ", error);
       throw new Error("Failed to fetch distances from zip");

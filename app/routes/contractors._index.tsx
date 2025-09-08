@@ -15,14 +15,7 @@ import {
 import { getContractors } from "~/models/contractor.server";
 
 import content from "../content/contractors.json";
-import {
-  STATES,
-  SERVICES,
-  CERTIFICATIONS,
-  Contractor,
-  ContractorFilters,
-  ContractorResponse,
-} from "../types";
+import { SERVICES, CERTIFICATIONS, Contractor, ContractorFilters, ContractorResponse } from "../types";
 
 export async function action({
   request,
@@ -48,7 +41,7 @@ export async function action({
 
   const filters: ContractorFilters = {
     zip: zip,
-    stateServed: body.get("state")?.toString() ?? "",
+    stateServed: "",
     services: services,
     certifications: certifications,
   };
@@ -209,20 +202,7 @@ export default function ContractorList() {
       <fetcher.Form id="filter-form" method="post">
         <div className="mt-6 flex flex-wrap items-center justify-center gap-y-2 space-x-4">
           <h3 className="hidden font-bold md:inline-block">Filter by:</h3>
-          <Select<Option<string>>
-            id="state"
-            instanceId="state"
-            name="state"
-            classNames={{
-              control: () => "!border-2 !border-green-200",
-            }}
-            isClearable
-            placeholder="Anywhere"
-            options={STATES.map((state) => ({
-              value: state,
-              label: state,
-            }))}
-          />
+          {/* State filter removed per requirements */}
           <Select<Option<string>, true>
             id="services"
             instanceId="services"
