@@ -1,5 +1,5 @@
 # base node image
-FROM node:23-bullseye-slim as base
+FROM node:25-bullseye-slim as base
 
 ARG SESSION_SECRET
 ARG DATABASE_URL
