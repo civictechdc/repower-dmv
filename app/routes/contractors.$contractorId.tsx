@@ -1,6 +1,11 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  isRouteErrorResponse,
+  useRouteError,
+} from "@remix-run/react";
 
 import Heading from "~/components/heading";
 import { getContractorById } from "~/models/contractor.server";
@@ -12,7 +17,11 @@ import {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const contractorId = params.contractorId as string;
-  return json(await getContractorById(contractorId));
+  const contractor = await getContractorById(contractorId);
+  if (!contractor) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return json(contractor);
 }
 
 export const meta: MetaFunction = () => [
@@ -97,4 +106,30 @@ export default function ContractorDetails() {
       </div>
     </div>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (error instanceof Error) {
+    return <div>An unexpected error occurred: {error.message}</div>;
+  }
+
+  if (!isRouteErrorResponse(error)) {
+    return <h1>Unknown Error</h1>;
+  }
+
+  if (error.status === 404) {
+    return (
+      <div>
+        <Heading>Contractor Not Found</Heading>
+        <p>The contractor you're looking for doesn't exist.</p>
+        <Link to="/contractors" className="text-blue-500 underline">
+          Back to Contractor List
+        </Link>
+      </div>
+    );
+  }
+
+  return <div>An unexpected error occurred: {error.statusText}</div>;
 }
