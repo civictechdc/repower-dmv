@@ -1,4 +1,5 @@
 import { isCmsEnabled } from "../content/utils";
+// Note: This route acts as a resource route when CMS is enabled; no UI component is exported.
 
 // Loads a CMS admin page from CDN. This will require authentication through github for a user to proceed.
 const CMS_HTML = `
