@@ -43,6 +43,19 @@ export interface Contractor {
   certifications: Certification[];
   distance?: number | undefined;
   googleRating?: number | undefined;
+  googleNumRatings?: number | undefined;
+  googleReviewsUrl?: string | undefined;
+  // Extended Google Places optional fields
+  googleMapsUri?: string | undefined;
+  googleBusinessStatus?: string | undefined;
+  googlePhoneNumber?: string | undefined;
+  googlePrimaryType?: string | undefined;
+  googlePrimaryTypeDisplayName?: string | undefined;
+  googleTypes?: unknown;
+  googleLocation?: unknown;
+  googleEditorialSummary?: unknown;
+  googleGenerativeSummary?: unknown;
+  googleReviewSummary?: unknown;
 }
 
 export interface CreateContractorPayload {
