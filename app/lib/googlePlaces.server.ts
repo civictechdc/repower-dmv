@@ -56,8 +56,7 @@ type TextSearchResult = {
 const ensureApiKey = () => {
   const key =
     process.env.GOOGLE_PLACES_API_KEY ||
-    process.env.GOOGLE_MAPS_API_KEY ||
-    "AIzaSyA-oFHDCIARxUazurnikvkmrhJ31JvHJ30";
+    process.env.GOOGLE_MAPS_API_KEY;
   if (!key) throw new Error("Google Places API key is not configured");
   return key;
 };

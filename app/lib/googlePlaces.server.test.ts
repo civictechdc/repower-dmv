@@ -3,7 +3,7 @@ import { getPlaceDetails, textSearchPlace,   } from "./googlePlaces.server";
 
 describe("googlePlaces utils", () => {
   beforeAll(() => {
-    process.env.GOOGLE_PLACES_API_KEY = "AIzaSyA-oFHDCIARxUazurnikvkmrhJ31JvHJ30";
+    process.env.GOOGLE_PLACES_API_KEY = "LOL_TEST_KEY";
   });
   it("parses text search response", async () => {
     const fakeFetch = async () => ({ ok: true, json: async () => ({ results: [{ place_id: "pid", name: "Name", rating: 4.2, user_ratings_total: 10 }] }) }) as any;
