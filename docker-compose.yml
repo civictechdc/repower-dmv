@@ -9,6 +9,8 @@ services:
       - DATABASE_URL
     ports:
       - "3000:3000"
+    env_file:
+      - ./.env
     volumes:
       - ./app:/myapp/app
       - ./assets:/myapp/assets
